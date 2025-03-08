@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "Darakht-e Danesh Library",
+    "slug": "ddl-mobile-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/dd-library-mark-icon-color.png",
+    "scheme": "rtlddlapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ddacademi.library",
+      "infoPlist": {
+        "ExpoLocalization_supportsRTL": true,
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/dd-library-mark-icon-white.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.ddacademi.library",
+      "runtimeVersion": "1.0.0"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/dd-library-logo-color.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-localization",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "supportsRTL": true,
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "35f0c9c3-eea4-4053-a0af-bb8ceb4f61b7"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/35f0c9c3-eea4-4053-a0af-bb8ceb4f61b7"
+    }
+  }
+}
