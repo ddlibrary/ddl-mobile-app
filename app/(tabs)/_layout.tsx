@@ -1,4 +1,4 @@
-import {router, Tabs, usePathname, useSegments} from 'expo-router';
+import {router, Tabs, useSegments} from 'expo-router';
 import React, {useEffect} from 'react';
 import {Image, Platform, StyleSheet} from 'react-native';
 
@@ -33,7 +33,6 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: true,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
@@ -59,7 +58,7 @@ export default function TabLayout() {
         name="(library)"
         options={{
           title: t('library'),
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="library-books.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="books.vertical.fill" color={color} />,
           headerStyle: {
             backgroundColor: "#ffa800",
           },
@@ -70,7 +69,7 @@ export default function TabLayout() {
         name="downloads"
         options={{
           title: t('downloads'),
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="download.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="square.and.arrow.down.fill" color={color} />,
           headerStyle: {
             backgroundColor: "#ffa800",
           },
@@ -80,7 +79,7 @@ export default function TabLayout() {
         name="languages"
         options={{
           title: t('languages'),
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="language.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="globe" color={color} />,
           headerStyle: {
             backgroundColor: "#ffa800",
           },
@@ -90,7 +89,7 @@ export default function TabLayout() {
         name="account"
         options={{
           title: t('Account'),
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="account-box.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
           headerStyle: {
             backgroundColor: "#ffa800",
           },
@@ -104,8 +103,8 @@ const styles = StyleSheet.create({
   ddlLogo: {
     height: 34,
     width: 250,
-    top: 15,
-    position: 'absolute',
+    top: Platform.OS === "android" ? 15 : 0,
+    position: Platform.OS === "android" ? "absolute" : "relative",
   },
   leftCornerButton: {
     margin: 7,

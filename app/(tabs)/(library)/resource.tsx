@@ -8,24 +8,25 @@ import {
   Image,
   Dimensions,
   RefreshControl,
-  Pressable
+  Pressable, Platform
 } from "react-native";
 import {router, useFocusEffect, useLocalSearchParams} from "expo-router";
 import React, {useCallback, useEffect, useState} from "react";
 import Api from "@/constants/Api";
 import i18n, {t} from "i18next";
 import ScrollView = Animated.ScrollView;
-import {useTranslation} from "react-i18next";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {File} from 'expo-file-system/next';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function resourceScreen() {
-  const {id, title, abstract, img} = useLocalSearchParams();
+  const {id, title, abstract, img: rawId} = useLocalSearchParams();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [waitTime, setWaitTime] = useState(0);
-
+  const [base64Image, setBase64Image] = useState("");
+  const img = String(rawId);
   useEffect(() => {
     getData();
   }, [id]);
@@ -39,6 +40,21 @@ export default function resourceScreen() {
 
     return () => clearInterval(interval);
   }, [waitTime]);
+
+  useEffect(() => {
+    const convertToBase64 = async () => {
+      try {
+        const base64 = new File(img).base64();
+        setBase64Image(`data:image/jpeg;base64,${base64}`);
+      } catch (error) {
+        console.error("Error converting image to Base64:", error);
+      }
+    };
+    if (Platform.OS === "ios")
+      convertToBase64();
+    else
+      setBase64Image(img);
+  }, [img]);
 
 
   const fetchData = async (url: string) => {
@@ -297,9 +313,8 @@ export default function resourceScreen() {
       </View>
     );
   };
-
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{...(Platform.OS === "ios" && { marginBottom: 80 })}}>
       <ScrollView
         refreshControl={
           <RefreshControl
@@ -312,9 +327,7 @@ export default function resourceScreen() {
       >
         <View style={styles.coverContainer}>
           <Image
-            style={styles.coverPhoto}
-            source={{ uri: img }}
-          />
+            source={{ uri: base64Image || Api.mainUrl + "storage/files/placeholder_image.png" }} style={styles.coverPhoto} resizeMode="contain" />
         </View>
         <View style={styles.cardView}>
           <Text style={[
@@ -440,7 +453,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: undefined,
     height: undefined,
-    resizeMode: 'contain',
   },
   cardTitle: {
     fontSize: 16,
@@ -453,9 +465,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(156,108,31,1)',
     borderColor: 'transparent',
     borderWidth: 0,
-    borderRadius: 5,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    borderRadius: 10,
+    paddingVertical: 7,
+    paddingHorizontal: 15,
     marginBottom:10,
   }
 });

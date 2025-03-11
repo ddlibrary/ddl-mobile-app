@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import {Directory, File, Paths} from "expo-file-system/next";
 import * as FileSystem from "expo-file-system";
-import {useLocalSearchParams} from "expo-router";
+import {router, useLocalSearchParams} from "expo-router";
 import React, {useEffect, useState} from "react";
 import Api from "@/constants/Api";
 import {SafeAreaProvider} from "react-native-safe-area-context";
@@ -39,13 +39,19 @@ export default function DownloadsScreen() {
     console.log("Downloading " + url);
     const destination = new Directory(Paths.document, "resource_files");
     try {
-      destination.create();
+      if (!destination.exists)
+        destination.create();
       const files = destination.list();
       const fileNamesWithoutExt = files.map((file) => (file.uri.split("/").pop() ?? "").replace(/\.[^/.]+$/, ""));
       const exists = fileNamesWithoutExt.includes(id);
       if (!exists) {
         const output = await File.downloadFileAsync(url, destination);
-        const metadata = { title, filename: output.uri.split("/").pop(), downloadedAt: new Date().toISOString() };
+        const fileNameWithoutExt = (output.uri.split("/").pop() ?? "").replace(/\.[^/.]+$/, "");
+        if (fileNameWithoutExt !== id ) {
+          const fileExtension = output.uri.split(".").pop();
+          await FileSystem.moveAsync({from: output.uri, to: destination.uri + "/" + id + "." + fileExtension});
+        }
+        const metadata = { title: title, filename: output.uri.split("/").pop(), downloadedAt: new Date().toISOString() };
         const metadataFile = new File(destination, id + ".json");
         metadataFile.create();
         metadataFile.write(JSON.stringify(metadata, null, 2));
@@ -58,6 +64,11 @@ export default function DownloadsScreen() {
 
   const listFiles = () => {
     const directory = new Directory(Paths.document, "resource_files");
+    try {
+      if (!directory.exists)
+        directory.create();
+    }
+    catch (error) {}
     const files = directory.list();
     const fileData = [];
     for (const file of files) {
@@ -65,21 +76,21 @@ export default function DownloadsScreen() {
       const fileName = file.uri.split("/").pop() ?? "";
       const metadataPath = "resource_files/" + fileName.replace(/\.[^/.]+$/, "") + ".json";
       const metadataFile = new File(Paths.document, metadataPath);
-      let title = "";
+      let trimmedTitle = "";
       let downloaded = "";
       if (metadataFile.exists) {
         try {
           const metadataContent = metadataFile.text();
           const metadata = JSON.parse(metadataContent);
-          title = metadata.title;
-          title = title.length > 40 ? title.slice(0, 40) + "..." : title;
+          trimmedTitle = metadata.title;
+          trimmedTitle = trimmedTitle.length > 40 ? trimmedTitle.slice(0, 40) + "..." : trimmedTitle;
           downloaded = metadata.downloadedAt;
         } catch (error) {
           console.error("Error reading metadata file:", error);
         }
       }
       if (file instanceof File) {
-        fileData.push({title, fileName: fileName, type: file.type, uri: file.uri, size: file.size, downloaded});
+        fileData.push({title: trimmedTitle, fileName: fileName, type: file.type, uri: file.uri, size: file.size, downloaded});
       }
     }
     setData(fileData);
@@ -127,6 +138,7 @@ export default function DownloadsScreen() {
       }
       setSelectedId(null);
       listFiles();
+      console.log("File deleted");
     } catch (error) {
       console.error("Error deleting file:", error);
     }
@@ -223,6 +235,11 @@ export default function DownloadsScreen() {
           keyExtractor={(item, index) => index.toString()}
           ListFooterComponent={<Loading />}
           extraData={data}
+          ListEmptyComponent={
+            <View style={{ alignItems: "center", marginTop: 20 }}>
+              <Text>{t("No files downloaded yet!")}</Text>
+            </View>
+          }
         />
       </SafeAreaView>
     </SafeAreaProvider>

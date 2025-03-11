@@ -3,7 +3,7 @@ import {
   SafeAreaView,
   SectionList,
   StyleSheet,
-  Text, Pressable
+  Text, Pressable, Platform
 } from "react-native";
 import React from "react";
 import i18n, {t} from "i18next";
@@ -124,6 +124,7 @@ export default function homeScreen() {
               {title}
             </Text>
           )}
+          stickySectionHeadersEnabled={false}
           renderSectionFooter={renderSectionFooter}
         />
       </SafeAreaView>
@@ -134,12 +135,14 @@ export default function homeScreen() {
 const styles = StyleSheet.create({
   parentContainer: {
     padding: 10,
+    ...(Platform.OS === "ios" && { marginBottom: 80 }),
   },
   header: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
     marginTop: 15,
+    ...(Platform.OS === "ios" && { marginLeft: 5, marginRight: 5 }),
   },
   container: {
   },
@@ -148,6 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 10,
     padding: 10,
+    height: 100,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

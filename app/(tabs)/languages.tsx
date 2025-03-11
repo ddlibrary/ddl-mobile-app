@@ -1,5 +1,5 @@
 import React from "react";
-import {StyleSheet, Text, SafeAreaView, Button, View} from "react-native";
+import {StyleSheet, Text, SafeAreaView, Button, View, Pressable} from "react-native";
 import "@/i18n";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
@@ -19,15 +19,16 @@ export default function LanguageScreen() {
 
   const LanguageItem = ({ lang, title }: { lang: string; title: string }) => (
     <View style={styles.buttonContainer}>
-      <Button
-        title={title}
-        color="#8a8a8a"
+      <Pressable
+        style={styles.button}
         onPress={ async () => {
           await AsyncStorage.setItem("language", lang);
           await i18n.changeLanguage(lang);
           await reloadAppAsync();
         }}
-      />
+      >
+        <Text style={{textAlign: "center"}}>{title}</Text>
+      </Pressable>
     </View>
   );
 
@@ -48,7 +49,17 @@ const styles = StyleSheet.create({
     flex: 1,
     marginVertical: 20,
   },
-buttonContainer: {
-    margin: 10,
+  buttonContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: 'rgb(230,230,230)',
+    borderColor: 'transparent',
+    borderWidth: 0,
+    width: "50%",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
 });

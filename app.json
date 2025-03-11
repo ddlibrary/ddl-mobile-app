@@ -1,10 +1,12 @@
 {
   "expo": {
-    "name": "Darakht-e Danesh Library",
+    "name": "DD Library",
     "slug": "ddl-mobile-app",
-    "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
     "orientation": "portrait",
-    "icon": "./assets/images/dd-library-mark-icon-color.png",
+    "icon": "./assets/images/app-icon.png",
     "scheme": "rtlddlapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,31 +16,25 @@
       "infoPlist": {
         "ExpoLocalization_supportsRTL": true,
         "ITSAppUsesNonExemptEncryption": false
-      },
-      "runtimeVersion": {
-        "policy": "appVersion"
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/dd-library-mark-icon-white.png",
-        "backgroundColor": "#000000"
+        "foregroundImage": "./assets/images/icon-foreground.png",
+        "backgroundImage": "./assets/images/icon-background.png",
+        "monochromeImage": "./assets/images/icon-monochrome.png"
       },
-      "package": "com.ddacademi.library",
-      "runtimeVersion": "1.0.0"
+      "package": "com.ddacademi.library"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "plugins": [
-      "expo-router",
-      [
+      "expo-router",      [
         "expo-splash-screen",
         {
-          "image": "./assets/images/dd-library-logo-color.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "image": "./assets/images/splash.png",
+          "resizeMode": "contain"
         }
       ],
       "expo-localization",
@@ -49,9 +45,6 @@
     },
     "extra": {
       "supportsRTL": true,
-      "router": {
-        "origin": false
-      },
       "eas": {
         "projectId": "35f0c9c3-eea4-4053-a0af-bb8ceb4f61b7"
       }

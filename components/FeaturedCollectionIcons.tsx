@@ -38,13 +38,13 @@ const collectionIconSources: Record<IconSourceKeys, any> = {
   'history-icon': require('@/assets/images/home/history-icon.png'),
   'business-and-communication-icon': require('@/assets/images/home/business-and-communication-icon.png'),
   'physical-sciences-icon': require('@/assets/images/home/physical-sciences-icon.png'),
-  'fiber-new': 'fiber-new.fill',
+  'fiber-new': 'sparkles.rectangle.stack.fill',
   'book': 'book.fill',
   'newspaper': 'newspaper.fill',
-  'child-care': 'child-care.fill',
-  'local-library': 'local-library.fill',
-  'school': 'school.fill',
-  'featured-video': 'featured-video.fill',
+  'child-care': 'figure.child',
+  'local-library': 'studentdesk',
+  'school': 'graduationcap.fill',
+  'featured-video': 'video.fill',
 };
 
 const FeaturedCollectionIcons = ({ id, name, style }: { id: string, name: IconSourceKeys; style: any }) => {

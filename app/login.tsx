@@ -156,7 +156,7 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   ddlLogo: {
-    height: 84,
+    height: Platform.OS === "ios" ? 100 : 84,
     width: 250,
     marginBottom: 15,
   },

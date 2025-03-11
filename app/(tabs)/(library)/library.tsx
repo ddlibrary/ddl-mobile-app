@@ -5,7 +5,7 @@ import {
   View,
   SafeAreaView,
   Pressable,
-  Text, RefreshControl, TextInput
+  Text, RefreshControl, TextInput, Platform
 } from 'react-native';
 import i18n, {t} from "i18next";
 import React, {useEffect, useState} from "react";
@@ -25,6 +25,7 @@ export default function libraryScreen() {
   const [waitTime, setWaitTime] = useState(0);
 
   useEffect(() => {
+    setIsLoading(true);
     setData([]);
     getData();
   }, [catId]);
@@ -43,7 +44,6 @@ export default function libraryScreen() {
     let accumulatedData: any[] = [];
     try {
       console.log("filter string: " + url);
-      setIsLoading(true);
       let delay = 1000;
       let retries = 5;
       for (let attempt = 0; attempt < retries; attempt++) {
@@ -77,9 +77,9 @@ export default function libraryScreen() {
     }
   };
 
-  const getData = (text = "" ) => {
+  const getData = (text = "", nextOffset = 0 ) => {
     let url =
-      Api.resourcesApi + i18n.language + "/" + offset + "?search=" + encodeURI(text) + (text ? "" : (type ? `&${type}=${catId}` : ""));
+      Api.resourcesApi + i18n.language + "/" + nextOffset + "?search=" + encodeURI(text) + (text ? "" : (type ? `&${type}=${catId}` : ""));
     fetchData(url);
   };
 
@@ -120,9 +120,10 @@ export default function libraryScreen() {
   };
 
   const getMoreData = () => {
+    const nextOffset = offset + 32;
     setOffset(offset + 32);
     setIsMoreLoading(true);
-    getData();
+    getData(undefined, nextOffset);
   };
 
   const loadMoreData = () => {
@@ -193,6 +194,7 @@ export default function libraryScreen() {
 const styles = StyleSheet.create({
   parentContainer: {
     padding: 10,
+    ...(Platform.OS === "ios" && { marginBottom: 80 }),
   },
   searchBar: {
     flexDirection: "row",
@@ -204,6 +206,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     height: 45,
     marginVertical: 8,
+    ...(Platform.OS === "ios" && { marginHorizontal: 5 }),
   },
   searchIcon: {
     marginRight: 8,

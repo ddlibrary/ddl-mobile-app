@@ -14,7 +14,7 @@ export default function LibraryLayout () {
         name="library"
         options={{
           title: t('library'),
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="library-books.fill" color={color} />,
+          headerShown: true,
           headerStyle: {
             backgroundColor: "#ffa800",
           },
