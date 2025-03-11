@@ -37,7 +37,8 @@
           "dark": {
             "image": "./assets/splash-dark.png",
             "backgroundColor": "#000000"
-          }
+          },
+          "imageWidth": 200
         }
       ],
       "expo-localization",
