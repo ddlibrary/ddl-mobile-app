@@ -2,8 +2,9 @@
   "expo": {
     "name": "DD Library",
     "slug": "ddl-mobile-app",
+    "version": "1.0.0",
     "runtimeVersion": {
-      "policy": "fingerprint"
+      "policy": "appVersion"
     },
     "orientation": "portrait",
     "icon": "./assets/images/app-icon.png",
