@@ -180,7 +180,7 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
   ddlLogo: {
-    height: Platform.OS === "ios" ? 100 : 84,
+    height: 100,
     width: 250,
     marginBottom: 15,
   },
