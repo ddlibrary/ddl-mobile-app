@@ -143,7 +143,7 @@ export default function Page() {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>{t("Confirm Deletion")}</Text>
-              <Text style={styles.modalText}>{t("Type DELETE to confirm account deletion. This action is irreversible.")}</Text>
+              <Text style={styles.modalText}>{t("delete_confirm")}</Text>
               {
                 deleteConfirm ? <Text style={styles.modalErrorText}>{deleteConfirm}</Text> : null
               }
@@ -162,7 +162,7 @@ export default function Page() {
                 <Button title={t("Confirm")} color="red" onPress={() => {
                   if (inputText === "DELETE") deleteUser();
                   else {
-                    setDeleteConfirm(t("Value mismatch. Please enter 'DELETE' in all caps."));
+                    setDeleteConfirm(t("value_mismatch_retry"));
                   }
                 }} />
               </View>

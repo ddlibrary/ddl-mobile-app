@@ -91,8 +91,8 @@ export default function libraryScreen() {
       >
         <ActivityIndicator animating size={"large"}/>
         {waitTime > 0 ?
-          (<Text>{t("The server is busy. Retrying in {{waitTime}} seconds...", {waitTime: waitTime/1000})}</Text>)
-          : (<Text>{t("Loading...")}</Text>)
+          (<Text>{t("server_busy_retrying", {waitTime: waitTime/1000})}</Text>)
+          : (<Text>{t("loading_with_periods")}</Text>)
         }
       </View>
     )
@@ -152,7 +152,7 @@ export default function libraryScreen() {
         <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
           style={styles.input}
-          placeholder={t("Search our library...")}
+          placeholder={t("search_our_library_with_periods")}
           placeholderTextColor="#888"
           value={searchQuery}
           onChangeText={setSearchQuery}

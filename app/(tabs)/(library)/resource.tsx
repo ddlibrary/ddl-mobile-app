@@ -102,8 +102,8 @@ export default function resourceScreen() {
       >
         <ActivityIndicator animating size={"large"}/>
         {waitTime > 0 ?
-          (<Text>{t("The server is busy. Retrying in {{waitTime}} seconds...", {waitTime: waitTime/1000})}</Text>)
-          : (<Text>{t("Loading...")}</Text>)
+          (<Text>{t("server_busy_retrying", {waitTime: waitTime/1000})}</Text>)
+          : (<Text>{t("loading_with_periods")}</Text>)
         }
       </View>
     )
@@ -201,7 +201,7 @@ export default function resourceScreen() {
         }}
       >
         {data.translations?.map((translation) => (
-          <Text style={styles.cardText} key={translation.id}>{t(translation.language)}{'\n'}</Text>
+          <Text style={styles.cardText} key={translation.id}>{translation.language}{'\n'}</Text>
         ))}
       </Text>
     );

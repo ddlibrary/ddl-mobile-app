@@ -36,10 +36,10 @@
         {
           "image": "./assets/images/splash.png",
           "dark": {
-            "image": "./assets/splash-dark.png",
+            "image": "./assets/images/splash-dark.png",
             "backgroundColor": "#000000"
           },
-          "imageWidth": 200
+          "resizeMode": "contain"
         }
       ],
       "expo-localization",
