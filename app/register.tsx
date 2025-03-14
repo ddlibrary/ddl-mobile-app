@@ -7,19 +7,17 @@ import {
   View,
   Button,
   TextInput,
-  Alert, Platform,
+  Alert,
+  Platform,
   KeyboardAvoidingView
 } from "react-native";
 import {useTranslation} from "react-i18next";
 import {Link, router} from "expo-router";
 import * as Linking from "expo-linking";
-import {SafeAreaProvider} from "react-native-safe-area-context";
 import React, {useState} from "react";
 import {useSession} from "@/context/AuthContext";
 import Api from "@/constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import i18n from "i18next";
-
 
 export default function RegisterScreen() {
   const {t, i18n} = useTranslation();
@@ -111,7 +109,7 @@ export default function RegisterScreen() {
         <Link
           href="./(tabs)"
           style={{
-            textAlign: i18n.language != "en" ? "left" : "right",
+            textAlign: i18n.language !== "en" ? "left" : "right",
             padding: 15,
             fontWeight: "bold",
           }}
@@ -135,7 +133,7 @@ export default function RegisterScreen() {
               style={[
                 styles.input,
                 {
-                  textAlign: i18n.language != "en" ? "right" : "left",
+                  textAlign: i18n.language !== "en" ? "right" : "left",
                 }
               ]}
               onChangeText={(text: string) => setEmail(text)}
@@ -148,7 +146,7 @@ export default function RegisterScreen() {
               style={[
                 styles.input,
                 {
-                  textAlign: i18n.language != "en" ? "right" : "left",
+                  textAlign: i18n.language !== "en" ? "right" : "left",
                 }
               ]}
               onChangeText={(text: string) => setPassword(text)}

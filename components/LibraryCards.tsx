@@ -52,7 +52,7 @@ const RenderCard = ({ item }) => {
       <Text
         style={[
           styles.cardTitle,
-          {textAlign: i18n.language != "en" ? "right" : "left",}
+          {textAlign: i18n.language !== "en" ? "right" : "left",}
         ]}
         numberOfLines={2}
         ellipsizeMode={"tail"}

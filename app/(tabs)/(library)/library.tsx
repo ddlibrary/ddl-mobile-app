@@ -14,7 +14,7 @@ import {router,useLocalSearchParams} from "expo-router";
 import RenderCard from "@/components/LibraryCards";
 import {Ionicons} from "@expo/vector-icons";
 
-export default function libraryScreen() {
+export default function LibraryScreen() {
   const { type, catId } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [isMoreLoading, setIsMoreLoading] = useState(false);

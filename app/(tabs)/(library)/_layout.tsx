@@ -1,11 +1,6 @@
 import { Stack, Tabs } from "expo-router";
-import React, {useMemo} from "react";
-import {IconSymbol} from "@/components/ui/IconSymbol";
+import React from "react";
 import {t} from "i18next";
-
-export const unstable_settings = {
-  initialRouteName: 'library',
-};
 
 export default function LibraryLayout () {
   return (

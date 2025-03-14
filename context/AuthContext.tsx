@@ -2,7 +2,6 @@ import { useContext, createContext, type PropsWithChildren } from "react";
 import { useStorageState } from "@/context/useStorageState";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Api from "@/constants/Api";
-import {router} from "expo-router";
 import * as SecureStore from "expo-secure-store";
 
 const AuthContext = createContext<{

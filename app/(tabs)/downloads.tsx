@@ -7,17 +7,18 @@ import {
   Pressable,
   Platform,
   ActivityIndicator,
-  TextInput, Button, Modal
+  Button,
+  Modal
 } from "react-native";
 import {Directory, File, Paths} from "expo-file-system/next";
 import * as FileSystem from "expo-file-system";
-import {router, useLocalSearchParams} from "expo-router";
+import {useLocalSearchParams} from "expo-router";
 import React, {useEffect, useState} from "react";
 import Api from "@/constants/Api";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import * as Linking from 'expo-linking';
+import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
 import i18n, {t} from "i18next";
 
@@ -68,7 +69,9 @@ export default function DownloadsScreen() {
       if (!directory.exists)
         directory.create();
     }
-    catch (error) {}
+    catch (error) {
+      console.error("Error creating directory:", error);
+    }
     const files = directory.list();
     const fileData = [];
     for (const file of files) {
@@ -121,7 +124,11 @@ export default function DownloadsScreen() {
         console.error("Error opening file:", error);
       }
     } else {
-      await Linking.openURL(uri);
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri);
+      } else {
+        console.log("Sharing is not available on this device");
+      }
     }
   };
 
@@ -193,8 +200,8 @@ export default function DownloadsScreen() {
         </Pressable>
         <MaterialIcons
           style={{
-            marginLeft: i18n.language != "en" ? 12 : 0,
-            marginRight: i18n.language != "en" ? 0 : 12,
+            marginLeft: i18n.language !== "en" ? 12 : 0,
+            marginRight: i18n.language !== "en" ? 0 : 12,
           }}
           name="delete"
           size={24}
@@ -226,7 +233,7 @@ export default function DownloadsScreen() {
         style={[
           styles.container,
           {
-            direction: i18n.language != "en" ? "rtl" : "ltr",
+            direction: i18n.language !== "en" ? "rtl" : "ltr",
           }
         ]}>
         <FlatList
