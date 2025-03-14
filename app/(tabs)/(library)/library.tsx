@@ -148,10 +148,21 @@ export default function LibraryScreen() {
 
   return (
     <SafeAreaView style={styles.parentContainer}>
-      <View style={styles.searchBar}>
-        <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
+      <View style={[
+        styles.searchBar,
+        {
+          flexDirection: i18n.language !== "en" ? "row-reverse" : "row",
+        }
+      ]}>
+        <Ionicons name="search" size={20} color="#888" style={{
+          marginRight: i18n.language !== "en" ? 0 : 8,
+          marginLeft: i18n.language !== "en" ? 8 : 0,
+        }} />
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            {textAlign: i18n.language !== "en" ? "right" : "left",}
+          ]}
           placeholder={t("search_our_library_with_periods")}
           placeholderTextColor="#888"
           value={searchQuery}
@@ -207,9 +218,6 @@ const styles = StyleSheet.create({
     height: 45,
     marginVertical: 8,
     ...(Platform.OS === "ios" && { marginHorizontal: 5 }),
-  },
-  searchIcon: {
-    marginRight: 8,
   },
   input: {
     flex: 1,
