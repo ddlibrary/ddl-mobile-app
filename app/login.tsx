@@ -10,7 +10,6 @@ import {
   KeyboardAvoidingView, Platform
 } from "react-native";
 import {Link, router} from "expo-router";
-import {SafeAreaProvider} from "react-native-safe-area-context";
 import {useTranslation} from "react-i18next";
 import React, {useState} from "react";
 import {useSession} from "@/context/AuthContext";
@@ -87,7 +86,7 @@ export default function LoginScreen() {
         <Link
           href="./(tabs)"
           style={{
-            textAlign: i18n.language != "en" ? "left" : "right",
+            textAlign: i18n.language !== "en" ? "left" : "right",
             padding: 15,
             fontWeight: "bold",
           }}
@@ -109,7 +108,7 @@ export default function LoginScreen() {
               style={[
                 styles.input,
                 {
-                  textAlign: i18n.language != "en" ? "right" : "left",
+                  textAlign: i18n.language !== "en" ? "right" : "left",
                 }
               ]}
               keyboardType="email-address"
@@ -124,7 +123,7 @@ export default function LoginScreen() {
               style={[
                 styles.input,
                 {
-                  textAlign: i18n.language != "en" ? "right" : "left",
+                  textAlign: i18n.language !== "en" ? "right" : "left",
                 }
               ]}
               onChangeText={(text: string) => setPassword(text)}

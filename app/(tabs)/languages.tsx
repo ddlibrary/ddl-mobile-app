@@ -1,11 +1,10 @@
 import React from "react";
-import {StyleSheet, Text, SafeAreaView, Button, View, Pressable} from "react-native";
+import {StyleSheet, Text, SafeAreaView, View, Pressable} from "react-native";
 import "@/i18n";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {SafeAreaProvider} from "react-native-safe-area-context";
-import {router} from "expo-router";
 import {reloadAppAsync} from "expo";
 
 

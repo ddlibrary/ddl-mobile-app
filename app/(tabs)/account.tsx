@@ -1,6 +1,6 @@
 import {View, Text, Button, StyleSheet, Pressable, SafeAreaView, Modal, TextInput} from 'react-native'
-import React, {useCallback, useEffect, useState} from 'react'
-import {Link, Redirect, router, useFocusEffect} from "expo-router";
+import React, {useEffect, useState} from 'react'
+import {router} from "expo-router";
 import {useSession} from "@/context/AuthContext";
 import {useTranslation} from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,7 +11,7 @@ import i18n from "i18next";
 import Api from "@/constants/Api";
 import {HelloWave} from "@/components/HelloWave";
 
-export default function Page() {
+export default function AccountScreen() {
   const {t} = useTranslation();
   const { signOut } = useSession();
   const [username, setUsername] = useState("");
@@ -54,19 +54,19 @@ export default function Page() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{flex: 1, direction: i18n.language != "en" ? "rtl" : "ltr"}}>
+      <View style={{flex: 1, direction: i18n.language !== "en" ? "rtl" : "ltr"}}>
         <View
           style={[
             styles.infoContainer,
             {
-              marginLeft: i18n.language != "en" ? 0 : 20,
-              marginRight: i18n.language != "en" ? 20 : 0,
+              marginLeft: i18n.language !== "en" ? 0 : 20,
+              marginRight: i18n.language !== "en" ? 20 : 0,
             }
           ]}>
           <MaterialIcons name="person" size={48} color="black" />
           <View style={{
-            marginLeft: i18n.language != "en" ? 0 : 20,
-            marginRight: i18n.language != "en" ? 20 : 0,
+            marginLeft: i18n.language !== "en" ? 0 : 20,
+            marginRight: i18n.language !== "en" ? 20 : 0,
 
           }}>
             <View
@@ -77,8 +77,8 @@ export default function Page() {
                 style={[
                   styles.welcomeText,
                   {
-                    marginLeft: i18n.language != "en" ? 5 : 0,
-                    marginRight: i18n.language != "en" ? 0 : 5,
+                    marginLeft: i18n.language !== "en" ? 5 : 0,
+                    marginRight: i18n.language !== "en" ? 0 : 5,
                   }
                 ]}>
                 {t("Hello {{username}}", { username })}
@@ -99,7 +99,7 @@ export default function Page() {
             </Text>
           </View>
           {
-            i18n.language != "en" ?
+            i18n.language !== "en" ?
               <MaterialIcons name="keyboard-arrow-left" style={{ }} size={16} color="black" /> :
               <MaterialIcons name="keyboard-arrow-right" style={{ }} size={16} color="black" />
           }
@@ -112,7 +112,7 @@ export default function Page() {
             </Text>
           </View>
           {
-            i18n.language != "en" ?
+            i18n.language !== "en" ?
             <MaterialIcons name="keyboard-arrow-left" style={{ }} size={16} color="black" /> :
             <MaterialIcons name="keyboard-arrow-right" style={{ }} size={16} color="black" />
           }
@@ -126,7 +126,7 @@ export default function Page() {
             </Text>
           </View>
           {
-            i18n.language != "en" ?
+            i18n.language !== "en" ?
               <MaterialIcons name="keyboard-arrow-left" style={{ }} size={16} color="black" /> :
               <MaterialIcons name="keyboard-arrow-right" style={{ }} size={16} color="black" />
           }

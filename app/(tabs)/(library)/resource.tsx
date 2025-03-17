@@ -10,8 +10,8 @@ import {
   RefreshControl,
   Pressable, Platform
 } from "react-native";
-import {router, useFocusEffect, useLocalSearchParams} from "expo-router";
-import React, {useCallback, useEffect, useState} from "react";
+import {router, useLocalSearchParams} from "expo-router";
+import React, {useEffect, useState} from "react";
 import Api from "@/constants/Api";
 import i18n, {t} from "i18next";
 import ScrollView = Animated.ScrollView;
@@ -19,8 +19,8 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {File} from 'expo-file-system/next';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-export default function resourceScreen() {
-  const {id, title, abstract, img: rawId} = useLocalSearchParams();
+export default function ResourceScreen() {
+  const {id, title, img: rawId} = useLocalSearchParams();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -127,7 +127,7 @@ export default function resourceScreen() {
     return (
       <Text
         style={{
-          textAlign: i18n.language != "en" ? "right" : "left",
+          textAlign: i18n.language !== "en" ? "right" : "left",
         }}
       >
         {data.authors?.map((author) => (
@@ -141,7 +141,7 @@ export default function resourceScreen() {
     return (
       <Text
         style={{
-          textAlign: i18n.language != "en" ? "right" : "left",
+          textAlign: i18n.language !== "en" ? "right" : "left",
         }}
       >
         {data.levels?.map((level) => (
@@ -155,7 +155,7 @@ export default function resourceScreen() {
     return (
       <Text
         style={{
-          textAlign: i18n.language != "en" ? "right" : "left",
+          textAlign: i18n.language !== "en" ? "right" : "left",
         }}
       >
         {data.subjects?.map((subject) => (
@@ -169,7 +169,7 @@ export default function resourceScreen() {
     return (
       <Text
         style={{
-          textAlign: i18n.language != "en" ? "right" : "left",
+          textAlign: i18n.language !== "en" ? "right" : "left",
         }}
       >
         {data.LearningResourceTypes?.map((resourceType) => (
@@ -183,7 +183,7 @@ export default function resourceScreen() {
     return (
       <Text
         style={{
-          textAlign: i18n.language != "en" ? "right" : "left",
+          textAlign: i18n.language !== "en" ? "right" : "left",
         }}
       >
         {data.publishers?.map((publisher) => (
@@ -197,7 +197,7 @@ export default function resourceScreen() {
     return (
       <Text
         style={{
-          textAlign: i18n.language != "en" ? "right" : "left",
+          textAlign: i18n.language !== "en" ? "right" : "left",
         }}
       >
         {data.translations?.map((translation) => (
@@ -211,7 +211,7 @@ export default function resourceScreen() {
     return (
       <Text
         style={{
-          textAlign: i18n.language != "en" ? "right" : "left",
+          textAlign: i18n.language !== "en" ? "right" : "left",
         }}
       >
         {data.CreativeCommons?.map((license) => (
@@ -239,7 +239,7 @@ export default function resourceScreen() {
     return (
       <View
         style={{
-          direction: i18n.language != "en" ? "rtl" : "ltr",
+          direction: i18n.language !== "en" ? "rtl" : "ltr",
         }}
       >
         {data.attachments?.map((attachment) => (
@@ -271,10 +271,10 @@ export default function resourceScreen() {
               }}>
                 <MaterialIcons name="remove-red-eye" size={20} color="white" />
                 <Text style={{
-                  marginLeft: i18n.language != "en" ? 0 : 8,
-                  marginRight: i18n.language != "en" ? 8 : 0,
+                  marginLeft: i18n.language !== "en" ? 0 : 8,
+                  marginRight: i18n.language !== "en" ? 8 : 0,
                   color: "white",
-                  textAlign: i18n.language != "en" ? "right" : "left",
+                  textAlign: i18n.language !== "en" ? "right" : "left",
                 }}>
                   {t("View")}
                 </Text>
@@ -299,10 +299,10 @@ export default function resourceScreen() {
               }}>
                 <MaterialIcons name="download" size={20} color="white" />
                 <Text style={{
-                  marginLeft: i18n.language != "en" ? 0 : 8,
-                  marginRight: i18n.language != "en" ? 8 : 0,
+                  marginLeft: i18n.language !== "en" ? 0 : 8,
+                  marginRight: i18n.language !== "en" ? 8 : 0,
                   color: "white",
-                  textAlign: i18n.language != "en" ? "right" : "left",
+                  textAlign: i18n.language !== "en" ? "right" : "left",
                 }}>
                   {t("Download")}
                 </Text>
@@ -333,7 +333,7 @@ export default function resourceScreen() {
           <Text style={[
             styles.cardTitle,
             {
-              textAlign: i18n.language != "en" ? "right" : "left",
+              textAlign: i18n.language !== "en" ? "right" : "left",
               fontSize: 17,
               fontWeight: "bold",
             }
@@ -345,7 +345,7 @@ export default function resourceScreen() {
           <Text style={[
             styles.cardTitle,
             {
-              textAlign: i18n.language != "en" ? "right" : "left",
+              textAlign: i18n.language !== "en" ? "right" : "left",
             }
           ]}>
             {t("Author")}{'\n'}
@@ -356,7 +356,7 @@ export default function resourceScreen() {
           <Text style={[
             styles.cardTitle,
             {
-              textAlign: i18n.language != "en" ? "right" : "left",
+              textAlign: i18n.language !== "en" ? "right" : "left",
             }
           ]}>
             {t("Resource level")}{'\n'}
@@ -367,7 +367,7 @@ export default function resourceScreen() {
           <Text style={[
             styles.cardTitle,
             {
-              textAlign: i18n.language != "en" ? "right" : "left",
+              textAlign: i18n.language !== "en" ? "right" : "left",
             }
           ]}>
             {t("Subject area")}{'\n'}
@@ -378,7 +378,7 @@ export default function resourceScreen() {
           <Text style={[
             styles.cardTitle,
             {
-              textAlign: i18n.language != "en" ? "right" : "left",
+              textAlign: i18n.language !== "en" ? "right" : "left",
             }
           ]}>
             {t("Learning resource type")}{'\n'}
@@ -389,7 +389,7 @@ export default function resourceScreen() {
           <Text style={[
             styles.cardTitle,
             {
-              textAlign: i18n.language != "en" ? "right" : "left",
+              textAlign: i18n.language !== "en" ? "right" : "left",
             }
           ]}>
             {t("Publisher")}{'\n'}
@@ -400,7 +400,7 @@ export default function resourceScreen() {
           <Text style={[
             styles.cardTitle,
             {
-              textAlign: i18n.language != "en" ? "right" : "left",
+              textAlign: i18n.language !== "en" ? "right" : "left",
             }
           ]}>
             {t("Available in the following languages")}{'\n'}
@@ -411,7 +411,7 @@ export default function resourceScreen() {
           <Text style={[
             styles.cardTitle,
             {
-              textAlign: i18n.language != "en" ? "right" : "left",
+              textAlign: i18n.language !== "en" ? "right" : "left",
             }
           ]}>
             {t("License")}{'\n'}
@@ -422,7 +422,7 @@ export default function resourceScreen() {
           <Text style={[
             styles.cardTitle,
             {
-              textAlign: i18n.language != "en" ? "right" : "left",
+              textAlign: i18n.language !== "en" ? "right" : "left",
             }
           ]}>
             {t("Resource files")}{'\n'}

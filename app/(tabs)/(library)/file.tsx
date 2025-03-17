@@ -1,9 +1,8 @@
-import {router, useLocalSearchParams, useNavigation} from "expo-router";
+import {useLocalSearchParams, useNavigation} from "expo-router";
 import Api from "@/constants/Api"
 import WebView from "react-native-webview";
-import React, {useLayoutEffect, useState} from "react";
-import {IconSymbol} from "@/components/ui/IconSymbol";
-import {ActivityIndicator, Pressable, StyleSheet, TouchableOpacity, View} from "react-native";
+import React, {useLayoutEffect} from "react";
+import {ActivityIndicator, View} from "react-native";
 
 export default function FileViewScreen () {
   const navigation = useNavigation();

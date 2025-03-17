@@ -3,16 +3,18 @@ import {
   SafeAreaView,
   SectionList,
   StyleSheet,
-  Text, Pressable, Platform
+  Text,
+  Pressable,
+  Platform
 } from "react-native";
 import React from "react";
-import i18n, {t} from "i18next";
+import i18n from "i18next";
 import {DATA as DATA_EN, CardItem} from "@/constants/home/FeaturedCollectionEn";
 import {DATA as DATA_FA} from "@/constants/home/FeaturedCollectionFa";
 import {DATA as DATA_PS} from "@/constants/home/FeaturedCollectionPs";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import FeaturedCollectionIcons, {IconSourceKeys} from "@/components/FeaturedCollectionIcons";
-import {router, useNavigation} from "expo-router";
+import {router} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 
 const DATA_MAP: Record<string, typeof DATA_EN> = {
@@ -64,7 +66,7 @@ const renderCards = ({ item }: { item: CardItem }) => {
       <Text
         style={[
           styles.label,
-          {textAlign: i18n.language != "en" ? "right" : "left",}
+          {textAlign: i18n.language !== "en" ? "right" : "left",}
         ]}
       >
         {item.name}
@@ -75,14 +77,14 @@ const renderCards = ({ item }: { item: CardItem }) => {
 
 const renderSectionFooter = ({ section }: {
   section: {
-    data: Array<{
+    data: {
       id: string;
       name: string;
       file_name: IconSourceKeys;
       subject_id: string | null;
       type_id: string | null;
       level_id: string | null;
-    }>
+    }[]
   }
 }) => {
   return (
@@ -95,7 +97,7 @@ const renderSectionFooter = ({ section }: {
       contentContainerStyle={styles.container}
       columnWrapperStyle={{
         justifyContent: 'space-between',
-        flexDirection: i18n.language != "en" ? "row-reverse" : "row",
+        flexDirection: i18n.language !== "en" ? "row-reverse" : "row",
       }}
     />
   )
@@ -116,8 +118,8 @@ export default function homeScreen() {
               style={[
                 styles.header,
                 {
-                  textAlign: i18n.language != "en" ? "right" : "left",
-                  marginRight: i18n.language != "en" ? 8 : "auto",
+                  textAlign: i18n.language !== "en" ? "right" : "left",
+                  marginRight: i18n.language !== "en" ? 8 : "auto",
                 }
               ]}
             >
