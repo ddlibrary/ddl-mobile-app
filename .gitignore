@@ -35,5 +35,10 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-app-example
-/.idea/
+# IDE/Editor-specific files
+.idea/
+.vscode/
+*.iml
+
+# EAS build artifacts
+.eas/
