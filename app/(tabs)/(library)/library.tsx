@@ -28,6 +28,7 @@ export default function LibraryScreen() {
     setIsLoading(true);
     setData([]);
     getData();
+    setSearchQuery("");
   }, [catId]);
 
   useEffect(() => {
@@ -197,6 +198,11 @@ export default function LibraryScreen() {
             }}
           />
         }
+        ListEmptyComponent={
+          <View style={styles.emptyContent}>
+            <Text>{t("No match found.")}</Text>
+          </View>
+        }
       />
     </SafeAreaView>
   )
@@ -262,5 +268,9 @@ const styles = StyleSheet.create({
     color: "#23b3ff",
     textDecorationLine: "underline",
     fontSize: 12,
+  },
+  emptyContent: {
+    alignItems: "center",
+    marginVertical: 10,
   }
 });

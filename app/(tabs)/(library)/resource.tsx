@@ -18,6 +18,7 @@ import ScrollView = Animated.ScrollView;
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {File} from 'expo-file-system/next';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as WebBrowser from 'expo-web-browser';
 
 export default function ResourceScreen() {
   const {id, title, img: rawId} = useLocalSearchParams();
@@ -242,74 +243,101 @@ export default function ResourceScreen() {
           direction: i18n.language !== "en" ? "rtl" : "ltr",
         }}
       >
-        {data.attachments?.map((attachment) => (
-          <View
-            key={attachment.id}
-            style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}
-          >
-            {fileType === "audio-file" ? (
-              <MaterialIcons name="audio-file" size={28} color="black" />
-            ) : (
-              <MaterialCommunityIcons name={fileType} size={28} color="black" />
-            )}
-            <Pressable
-              style={styles.fileButton}
+        {data.attachments?.length > 0 ? (
+          data.attachments.map((attachment) => (
+            <View
               key={attachment.id}
-              onPress={() => {
-                router.push({
-                  pathname: "./file",
-                  params: {
-                    id: attachment.id,
-                    title: title,
-                  }
-                })
-              }}
+              style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}
             >
-              <View style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}>
-                <MaterialIcons name="remove-red-eye" size={20} color="white" />
-                <Text style={{
-                  marginLeft: i18n.language !== "en" ? 0 : 8,
-                  marginRight: i18n.language !== "en" ? 8 : 0,
-                  color: "white",
-                  textAlign: i18n.language !== "en" ? "right" : "left",
+              {fileType === "audio-file" ? (
+                <MaterialIcons name="audio-file" size={28} color="black" />
+              ) : (
+                <MaterialCommunityIcons name={fileType} size={28} color="black" />
+              )}
+              <Pressable
+                style={styles.fileButton}
+                key={attachment.id}
+                onPress={() => {
+                  router.push({
+                    pathname: "./file",
+                    params: {
+                      id: attachment.id,
+                      title: title,
+                    }
+                  })
+                }}
+              >
+                <View style={{
+                  flexDirection: "row",
+                  alignItems: "center",
                 }}>
-                  {t("View")}
-                </Text>
-              </View>
-            </Pressable>
+                  <MaterialIcons name="remove-red-eye" size={20} color="white" />
+                  <Text style={{
+                    marginLeft: i18n.language !== "en" ? 0 : 8,
+                    marginRight: i18n.language !== "en" ? 8 : 0,
+                    color: "white",
+                    textAlign: i18n.language !== "en" ? "right" : "left",
+                  }}>
+                    {t("View")}
+                  </Text>
+                </View>
+              </Pressable>
+              <Pressable
+                style={styles.fileButton}
+                key={"download_" + attachment.id}
+                onPress={() => {
+                  router.push({
+                    pathname: "../downloads",
+                    params: {
+                      id: attachment.id,
+                      title: title,
+                    }
+                  })
+                }}
+              >
+                <View style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}>
+                  <MaterialIcons name="download" size={20} color="white" />
+                  <Text style={{
+                    marginLeft: i18n.language !== "en" ? 0 : 8,
+                    marginRight: i18n.language !== "en" ? 8 : 0,
+                    color: "white",
+                    textAlign: i18n.language !== "en" ? "right" : "left",
+                  }}>
+                    {t("Download")}
+                  </Text>
+                </View>
+              </Pressable>
+            </View>
+          ))
+        ) : (
+          <View style={{
+            alignSelf: 'flex-start',
+          }}>
             <Pressable
-              style={styles.fileButton}
-              key={"download_" + attachment.id}
-              onPress={() => {
-                router.push({
-                  pathname: "../downloads",
-                  params: {
-                    id: attachment.id,
-                    title: title,
-                  }
-                })
+              style={styles.fileMissingButton}
+              onPress={async () => {
+                await WebBrowser.openBrowserAsync(Api.mainUrl + i18n.language + "/resource/" + id);
               }}
             >
               <View style={{
                 flexDirection: "row",
-                alignItems: "center",
               }}>
-                <MaterialIcons name="download" size={20} color="white" />
+                <MaterialIcons name="link" size={20} color="white" />
                 <Text style={{
                   marginLeft: i18n.language !== "en" ? 0 : 8,
                   marginRight: i18n.language !== "en" ? 8 : 0,
                   color: "white",
                   textAlign: i18n.language !== "en" ? "right" : "left",
                 }}>
-                  {t("Download")}
+                  {t("View this resource in your browser")}
                 </Text>
               </View>
             </Pressable>
           </View>
-        ))}
+        )}
       </View>
     );
   };
@@ -463,6 +491,15 @@ const styles = StyleSheet.create({
   },
   fileButton: {
     backgroundColor: 'rgba(156,108,31,1)',
+    borderColor: 'transparent',
+    borderWidth: 0,
+    borderRadius: 10,
+    paddingVertical: 7,
+    paddingHorizontal: 15,
+    marginBottom:10,
+  },
+  fileMissingButton: {
+    backgroundColor: 'rgb(138,138,138)',
     borderColor: 'transparent',
     borderWidth: 0,
     borderRadius: 10,
