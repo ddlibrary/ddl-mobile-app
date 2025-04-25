@@ -51,5 +51,6 @@
     "Create an account on DDL": "په DDL کی حساب جور کړي",
     "Already have an account?": "له وړاندي حساب لري؟",
     "library_resources": "د کتابټون سرچینی",
-    "View this resource in your browser": "دا سرچینه په خپل براوزر کې وګورئ"
+    "View this resource in your browser": "دا سرچینه په خپل براوزر کې وګورئ",
+    "No match found.": "هیڅ ریکارډ ونه موندل شو."
 }
