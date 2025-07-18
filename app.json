@@ -2,11 +2,10 @@
   "expo": {
     "name": "DD Library",
     "slug": "ddl-mobile-app",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "runtimeVersion": {
       "policy": "appVersion"
     },
-    "orientation": "portrait",
     "icon": "./assets/images/app-icon.png",
     "scheme": "rtlddlapp",
     "userInterfaceStyle": "automatic",
@@ -31,7 +30,8 @@
       "**/*"
     ],
     "plugins": [
-      "expo-router",      [
+      "expo-router",
+      [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash.png",

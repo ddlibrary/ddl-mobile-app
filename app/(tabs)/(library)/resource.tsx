@@ -60,7 +60,6 @@ export default function ResourceScreen() {
 
   const fetchData = async (url: string) => {
     try {
-      console.log("filter string: " + url);
       setIsLoading(true);
       let delay = 1000;
       let retries = 5;
@@ -201,9 +200,30 @@ export default function ResourceScreen() {
           textAlign: i18n.language !== "en" ? "right" : "left",
         }}
       >
-        {data.translations?.map((translation) => (
-          <Text style={styles.cardText} key={translation.id}>{translation.language}{'\n'}</Text>
-        ))}
+        {data.translations?.map((translation) => {
+          if (!(['en', 'fa', 'ps'].includes(translation.language))) return;
+          let language = '';
+          switch (translation.language) {
+            case 'ps': {
+              language = 'پشتو';
+              break;
+            }
+            case 'fa': {
+              language = 'فارسی';
+              break;
+            }
+            default: {
+              language = 'English';
+              break;
+            }
+          }
+          return(
+            <Text style={styles.cardText} key={translation.id}>
+              {language}
+              {'\n'}
+            </Text>
+          );
+        })}
       </Text>
     );
   };

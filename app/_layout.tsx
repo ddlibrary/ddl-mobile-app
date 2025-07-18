@@ -6,6 +6,7 @@ import {t} from "i18next";
 import {StatusBar} from "expo-status-bar";
 import {useEffect, useState} from "react";
 import {ActivityIndicator, View} from "react-native";
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 export default function Root() {
 
@@ -29,32 +30,34 @@ export default function Root() {
   }
 
   return (
-    <SessionProvider>
-      <StatusBar style="light" />
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="login"
-          options={{
-            title: t('Login'),
-            headerBackVisible: false,
-            headerStyle: {
-              backgroundColor: "#ffa800",
-            },
-          }}
-        />
-        <Stack.Screen
-          name="register"
-          options={{
-            title: t('Register'),
-            headerBackVisible: false,
-            headerStyle: {
-              backgroundColor: "#ffa800",
-            },
-            headerLeft: ()=> null,
-          }}
-        />
-      </Stack>
-    </SessionProvider>
+    <SafeAreaProvider>
+      <SessionProvider>
+        <StatusBar style="light" />
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="login"
+            options={{
+              title: t('Login'),
+              headerBackVisible: false,
+              headerStyle: {
+                backgroundColor: "#ffa800",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="register"
+            options={{
+              title: t('Register'),
+              headerBackVisible: false,
+              headerStyle: {
+                backgroundColor: "#ffa800",
+              },
+              headerLeft: ()=> null,
+            }}
+          />
+        </Stack>
+      </SessionProvider>
+    </SafeAreaProvider>
   );
 }
