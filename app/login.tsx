@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -17,6 +16,7 @@ import * as Device from 'expo-device';
 import Api from "@/constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from "i18next";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 export default function LoginScreen() {
   const {t} = useTranslation();

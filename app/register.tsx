@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -18,6 +17,7 @@ import React, {useState} from "react";
 import {useSession} from "@/context/AuthContext";
 import Api from "@/constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 export default function RegisterScreen() {
   const {t, i18n} = useTranslation();

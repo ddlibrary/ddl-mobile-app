@@ -2,7 +2,7 @@ import {Image, Pressable, StyleSheet, Text} from 'react-native';
 import React, {memo} from "react";
 import i18n from "i18next";
 import {router} from "expo-router";
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
 
 const resourceImageDir = FileSystem.cacheDirectory + 'resource_images/';

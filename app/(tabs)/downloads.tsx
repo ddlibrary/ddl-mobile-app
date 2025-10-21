@@ -1,7 +1,6 @@
 import {
   StyleSheet,
   Text,
-  SafeAreaView,
   FlatList,
   View,
   Pressable,
@@ -11,11 +10,11 @@ import {
   Modal
 } from "react-native";
 import {Directory, File, Paths} from "expo-file-system/next";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import {useLocalSearchParams} from "expo-router";
 import React, {useEffect, useState} from "react";
 import Api from "@/constants/Api";
-import {SafeAreaProvider} from "react-native-safe-area-context";
+import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as Sharing from 'expo-sharing';
@@ -63,7 +62,7 @@ export default function DownloadsScreen() {
     }
   }
 
-  const listFiles = () => {
+  const listFiles = async () => {
     const directory = new Directory(Paths.document, "resource_files");
     try {
       if (!directory.exists)
@@ -84,7 +83,7 @@ export default function DownloadsScreen() {
       if (metadataFile.exists) {
         try {
           const metadataContent = metadataFile.text();
-          const metadata = JSON.parse(metadataContent);
+          const metadata = JSON.parse(await metadataContent);
           trimmedTitle = metadata.title;
           trimmedTitle = trimmedTitle.length > 40 ? trimmedTitle.slice(0, 40) + "..." : trimmedTitle;
           downloaded = metadata.downloadedAt;

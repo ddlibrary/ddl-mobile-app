@@ -3,7 +3,6 @@ import {
   StyleSheet,
   FlatList,
   View,
-  SafeAreaView,
   Pressable,
   Text, RefreshControl, TextInput, Platform
 } from 'react-native';
@@ -13,6 +12,7 @@ import Api from "@/constants/Api";
 import {router,useLocalSearchParams} from "expo-router";
 import RenderCard from "@/components/LibraryCards";
 import {Ionicons} from "@expo/vector-icons";
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 export default function LibraryScreen() {
   const { type, catId } = useLocalSearchParams();
@@ -148,7 +148,7 @@ export default function LibraryScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.parentContainer}>
+    <SafeAreaProvider style={styles.parentContainer}>
       <View style={[
         styles.searchBar,
         {
@@ -204,7 +204,7 @@ export default function LibraryScreen() {
           </View>
         }
       />
-    </SafeAreaView>
+    </SafeAreaProvider>
   )
 }
 

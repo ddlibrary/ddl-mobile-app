@@ -1,6 +1,5 @@
 import {
   FlatList,
-  SafeAreaView,
   SectionList,
   StyleSheet,
   Text,
@@ -12,7 +11,7 @@ import i18n from "i18next";
 import {DATA as DATA_EN, CardItem} from "@/constants/home/FeaturedCollectionEn";
 import {DATA as DATA_FA} from "@/constants/home/FeaturedCollectionFa";
 import {DATA as DATA_PS} from "@/constants/home/FeaturedCollectionPs";
-import {SafeAreaProvider} from "react-native-safe-area-context";
+import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import FeaturedCollectionIcons, {IconSourceKeys} from "@/components/FeaturedCollectionIcons";
 import {router} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -107,29 +106,27 @@ export default function homeScreen() {
 
   const selectedData = DATA_MAP[i18n.language] || DATA_EN;
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.parentContainer}>
-        <SectionList
-          sections={selectedData}
-          keyExtractor={(item) => item.id}
-          renderItem={() => null} // we'll render using <FlatList /> in the Footer
-          renderSectionHeader={({section: {title}}) => (
-            <Text
-              style={[
-                styles.header,
-                {
-                  textAlign: i18n.language !== "en" ? "right" : "left",
-                  marginRight: i18n.language !== "en" ? 8 : "auto",
-                }
-              ]}
-            >
-              {title}
-            </Text>
-          )}
-          stickySectionHeadersEnabled={false}
-          renderSectionFooter={renderSectionFooter}
-        />
-      </SafeAreaView>
+    <SafeAreaProvider style={styles.parentContainer}>
+      <SectionList
+        sections={selectedData}
+        keyExtractor={(item) => item.id}
+        renderItem={() => null} // we'll render using <FlatList /> in the Footer
+        renderSectionHeader={({section: {title}}) => (
+          <Text
+            style={[
+              styles.header,
+              {
+                textAlign: i18n.language !== "en" ? "right" : "left",
+                marginRight: i18n.language !== "en" ? 8 : "auto",
+              }
+            ]}
+          >
+            {title}
+          </Text>
+        )}
+        stickySectionHeadersEnabled={false}
+        renderSectionFooter={renderSectionFooter}
+      />
     </SafeAreaProvider>
   );
 }

@@ -1,10 +1,10 @@
 import React from "react";
-import {StyleSheet, Text, SafeAreaView, View, Pressable} from "react-native";
+import {StyleSheet, Text, View, Pressable} from "react-native";
 import "@/i18n";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {SafeAreaProvider} from "react-native-safe-area-context";
+import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import {reloadAppAsync} from "expo";
 
 
@@ -32,8 +32,8 @@ export default function LanguageScreen() {
   );
 
   return (
-    <SafeAreaProvider>
-        <SafeAreaView style={styles.container}>
+    <SafeAreaProvider style={styles.container}>
+        <SafeAreaView >
           {languages.map((lang) => (
             <LanguageItem {...lang} key={lang.title} />
           ))}

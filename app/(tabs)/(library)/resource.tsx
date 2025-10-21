@@ -1,5 +1,4 @@
 import {
-  SafeAreaView,
   View,
   Text,
   StyleSheet,
@@ -19,6 +18,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {File} from 'expo-file-system/next';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as WebBrowser from 'expo-web-browser';
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 export default function ResourceScreen() {
   const {id, title, img: rawId} = useLocalSearchParams();
@@ -362,7 +362,7 @@ export default function ResourceScreen() {
     );
   };
   return (
-    <SafeAreaView style={{...(Platform.OS === "ios" && { marginBottom: 80 })}}>
+    <SafeAreaProvider style={{...(Platform.OS === "ios" && { marginBottom: 80 })}}>
       <ScrollView
         refreshControl={
           <RefreshControl
@@ -478,7 +478,7 @@ export default function ResourceScreen() {
           <Attachments data={data} />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
