@@ -1,4 +1,4 @@
-import {router, Tabs, useSegments} from 'expo-router';
+import {Redirect, router, Tabs, useSegments} from 'expo-router';
 import React, {useEffect} from 'react';
 import {Image, Platform, StyleSheet} from 'react-native';
 
@@ -22,12 +22,9 @@ export default function TabLayout() {
   const { session, isLoading } = useSession();
   const segments = useSegments();
 
-  useEffect(() => {
-    if (!isLoading && !session && ["account", "downloads"].includes(segments[1] ?? "")) {
-      router.push("/login");
-    }
-  }, [segments, isLoading, session]);
-
+  if (!isLoading && !session && ["account", "downloads"].includes(segments[1] ?? "")) {
+    return <Redirect href="/login" />;
+  }
 
   return (
     <Tabs
