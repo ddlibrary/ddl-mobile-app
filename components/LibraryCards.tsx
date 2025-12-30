@@ -5,13 +5,12 @@ import {router} from "expo-router";
 import * as FileSystem from 'expo-file-system/legacy';
 
 
-const resourceImageDir = FileSystem.cacheDirectory + 'resource_images/';
-const getResourceImageFileUri = (resourceId: string) => resourceImageDir + `${resourceId}`;
+export const resourceImageDir = FileSystem.cacheDirectory + 'resource_images/';
+export const getResourceImageFileUri = (resourceId: string) => resourceImageDir + `${resourceId}`;
 
-async function ensureDirExists() {
+export async function ensureDirExists() {
   const dirInfo = await FileSystem.getInfoAsync(resourceImageDir);
   if (!dirInfo.exists) {
-    console.log("Directory doesn't exist, creating…");
     await FileSystem.makeDirectoryAsync(resourceImageDir, { intermediates: true });
   }
 }
@@ -28,10 +27,8 @@ const RenderCard = ({ item }) => {
       onPress={async () => {
         await ensureDirExists();
         const imageUri = getResourceImageFileUri(item.id);
-        console.log('Downloading', imageUri);
         const fileInfo = await FileSystem.getInfoAsync(imageUri);
         if (!fileInfo.exists) {
-          console.log("Image isn't cached locally. Downloading…");
           await FileSystem.downloadAsync(item.img, imageUri);
         }
         router.push({
@@ -39,7 +36,7 @@ const RenderCard = ({ item }) => {
           params: {
             id: item.id,
             title: item.title,
-            abstract: "item.abstract", // until we non-HTMLify abstract
+            abstract: item.abstract,
             img: imageUri,
           }
         });
