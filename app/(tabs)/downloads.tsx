@@ -37,7 +37,7 @@ export default function DownloadsScreen() {
   const downloadAndStoreFile = async (id: string) => {
     const url = Api.fileApi + id;
     console.log("Downloading " + url);
-    const destination = new Directory(Paths.document, "resource_files");
+    const destination = new Directory(Paths.document, "dd_library_resource_files");
     try {
       if (!destination.exists)
         destination.create();
@@ -63,7 +63,7 @@ export default function DownloadsScreen() {
   }
 
   const listFiles = async () => {
-    const directory = new Directory(Paths.document, "resource_files");
+    const directory = new Directory(Paths.document, "dd_library_resource_files");
     try {
       if (!directory.exists)
         directory.create();
@@ -76,7 +76,7 @@ export default function DownloadsScreen() {
     for (const file of files) {
       if (file.uri.endsWith(".json")) continue;
       const fileName = file.uri.split("/").pop() ?? "";
-      const metadataPath = "resource_files/" + fileName.replace(/\.[^/.]+$/, "") + ".json";
+      const metadataPath = "dd_library_resource_files/" + fileName.replace(/\.[^/.]+$/, "") + ".json";
       const metadataFile = new File(Paths.document, metadataPath);
       let trimmedTitle = "";
       let downloaded = "";
@@ -134,11 +134,11 @@ export default function DownloadsScreen() {
   const deleteFile = (fileName: string) => {
     try {
       const jsonFileName = fileName.replace(/\.[^/.]+$/, ".json");
-      const file = new File(Paths.document, "resource_files/" + fileName);
+      const file = new File(Paths.document, "dd_library_resource_files/" + fileName);
       if (file.exists) {
         file.delete();
       }
-      const jsonFile = new File(Paths.document, "resource_files/" + jsonFileName);
+      const jsonFile = new File(Paths.document, "dd_library_resource_files/" + jsonFileName);
       if (jsonFile.exists) {
         jsonFile.delete();
       }
