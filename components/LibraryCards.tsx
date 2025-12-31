@@ -35,7 +35,6 @@ const RenderCard = ({ item }: RenderCardProps) => {
       ]}
       onPress={async () => {
         await ensureDirExists();
-        console.log(resourceImageDir.list());
         const imageFile = getResourceImageFile(item.id);
         if (!imageFile.exists) {
             await File.downloadFileAsync(item.img, imageFile);
