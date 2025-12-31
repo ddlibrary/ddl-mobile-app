@@ -19,6 +19,7 @@ import {File} from 'expo-file-system/next';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as WebBrowser from 'expo-web-browser';
 import {SafeAreaProvider} from "react-native-safe-area-context";
+import {ensureDirExists, getResourceImageFile} from "@/components/LibraryCards";
 
 export default function ResourceScreen() {
   const {id, title, img: rawId, abstract: rawAbstract} = useLocalSearchParams();
@@ -27,7 +28,8 @@ export default function ResourceScreen() {
   const [error, setError] = useState<any>(null);
   const [waitTime, setWaitTime] = useState(0);
   const [base64Image, setBase64Image] = useState("");
-  const img = String(rawId);
+  const [resourceImg, setResourceImg] = useState(String(rawId || ""));
+  const [resourceAbstract, setResourceAbstract] = useState(String(rawAbstract || ""));
 
   const isRTL = i18n.language !== "en";
   const textAlign = isRTL ? "right" : "left";
@@ -55,9 +57,45 @@ export default function ResourceScreen() {
     return cleaned.trim();
   };
 
-  const abstract = sanitizeText(rawAbstract);
+  const abstract = sanitizeText(resourceAbstract);
 
   useEffect(() => {
+    const checkAndFetchMissingData = async () => {
+      let currentImg = String(rawId || "");
+      let currentAbstract = String(rawAbstract || "");
+
+      if (!currentImg || !currentAbstract) {
+        try {
+          const response = await fetch(Api.resourceApi + id);
+          if (response.ok) {
+            const json = await response.json();
+            if (!currentImg) currentImg = json.img;
+            if (!currentAbstract) currentAbstract = json.abstract;
+            setResourceAbstract(currentAbstract);
+          }
+        } catch (e) {
+          console.error("Error fetching missing resource info:", e);
+        }
+      }
+
+      if (currentImg && currentImg.startsWith('http')) {
+        try {
+          await ensureDirExists();
+          const fileInfo = getResourceImageFile(String(id));
+          if (!fileInfo.exists) {
+            await File.downloadFileAsync(currentImg, fileInfo);
+          }
+          setResourceImg(fileInfo.uri);
+        } catch (e) {
+          console.error("Error saving image locally:", e);
+          setResourceImg(currentImg);
+        }
+      } else {
+        setResourceImg(currentImg);
+      }
+    };
+
+    checkAndFetchMissingData();
     getData();
   }, [id]);
 
@@ -72,19 +110,19 @@ export default function ResourceScreen() {
   useEffect(() => {
     const convertToBase64 = async () => {
       try {
-        const base64 = await new File(img).base64();
+        const base64 = await new File(resourceImg).base64();
         setBase64Image(`data:image/jpeg;base64,${base64}`);
       } catch (e) {
         console.error("Error converting image to Base64:", e);
         setBase64Image("");
       }
     };
-    if (Platform.OS === "ios" && img && !img.startsWith('http')) {
+    if (Platform.OS === "ios" && resourceImg && !resourceImg.startsWith('http')) {
       convertToBase64();
     } else {
-      setBase64Image(img);
+      setBase64Image(resourceImg);
     }
-  }, [img]);
+  }, [resourceImg]);
 
   const fetchData = async (url: string) => {
     setIsLoading(true);
@@ -114,7 +152,7 @@ export default function ResourceScreen() {
     }
   };
 
-  const getData = () => fetchData(Api.resourceApi + id);
+  const getData = () => fetchData(Api.resourceAttributesApi + id);
 
   if (isLoading && !data) {
     return (
