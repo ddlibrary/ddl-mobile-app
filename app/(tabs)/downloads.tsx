@@ -228,7 +228,7 @@ export default function DownloadsScreen() {
 
         <Modal transparent visible={!!selectedFile} animationType="fade">
           <View style={styles.modalOverlay}>
-            <div style={styles.modalContent}>
+            <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>{t("Are you sure?")}</Text>
               <View style={styles.buttonContainer}>
                 <Button title={t("Cancel")} onPress={() => setSelectedFile(null)} />
@@ -238,7 +238,7 @@ export default function DownloadsScreen() {
                   onPress={() => selectedFile && deleteFile(selectedFile.fileName)} 
                 />
               </View>
-            </div>
+            </View>
           </View>
         </Modal>
       </SafeAreaView>
