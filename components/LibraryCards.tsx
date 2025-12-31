@@ -15,7 +15,18 @@ export async function ensureDirExists() {
   }
 }
 
-const RenderCard = ({ item }) => {
+interface ResourceItem {
+  id: string;
+  img: string;
+  title: string;
+  abstract: string;
+}
+
+interface RenderCardProps {
+  item: ResourceItem;
+}
+
+const RenderCard = ({ item }: RenderCardProps) => {
   return (
     <Pressable
       style={({pressed}) => [
