@@ -2,16 +2,14 @@ import {Image, Pressable, StyleSheet, Text} from 'react-native';
 import React, {memo} from "react";
 import i18n from "i18next";
 import {router} from "expo-router";
-import * as FileSystem from 'expo-file-system/legacy';
+import { Directory, File, Paths } from 'expo-file-system/next';
 
-
-export const resourceImageDir = FileSystem.cacheDirectory + 'resource_images/';
-export const getResourceImageFileUri = (resourceId: string) => resourceImageDir + `${resourceId}`;
+export const resourceImageDir = new Directory(Paths.cache, 'dd_library_resource_images');
+export const getResourceImageFile = (resourceId: string) => new File(resourceImageDir, `${resourceId}`);
 
 export async function ensureDirExists() {
-  const dirInfo = await FileSystem.getInfoAsync(resourceImageDir);
-  if (!dirInfo.exists) {
-    await FileSystem.makeDirectoryAsync(resourceImageDir, { intermediates: true });
+  if (!resourceImageDir.exists) {
+    resourceImageDir.create();
   }
 }
 
@@ -37,10 +35,10 @@ const RenderCard = ({ item }: RenderCardProps) => {
       ]}
       onPress={async () => {
         await ensureDirExists();
-        const imageUri = getResourceImageFileUri(item.id);
-        const fileInfo = await FileSystem.getInfoAsync(imageUri);
-        if (!fileInfo.exists) {
-          await FileSystem.downloadAsync(item.img, imageUri);
+        console.log(resourceImageDir.list());
+        const imageFile = getResourceImageFile(item.id);
+        if (!imageFile.exists) {
+            await File.downloadFileAsync(item.img, imageFile);
         }
         router.push({
           pathname: "./resource",
@@ -48,7 +46,7 @@ const RenderCard = ({ item }: RenderCardProps) => {
             id: item.id,
             title: item.title,
             abstract: item.abstract,
-            img: imageUri,
+            img: imageFile.uri,
           }
         });
       }}
