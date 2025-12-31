@@ -8,7 +8,6 @@ export default function FileViewScreen () {
   const navigation = useNavigation();
   const {id, title} = useLocalSearchParams();
   const uri = Api.fileApi + id;
-  console.log(uri);
 
   const isLoading = () => {
     return (

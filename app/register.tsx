@@ -63,7 +63,6 @@ export default function RegisterScreen() {
       setError("Password must be at least 8 characters long, contain a number, and a special character (!@#$%^&.)");
       return;
     }
-    console.log("All checks passed")
     fetch(Api.SignUpUrl, {
       method: "POST",
       body: formData,
@@ -78,7 +77,6 @@ export default function RegisterScreen() {
       else if (res.email) setError(res.email);
       else if (res.user) {
         signIn(res.token);
-        console.log(res.user);
         await AsyncStorage.setItem("email", email);
         await AsyncStorage.setItem("user", res.user);
         Alert.alert(t("Welcome!"), t("Your account has been created successfully."), [
