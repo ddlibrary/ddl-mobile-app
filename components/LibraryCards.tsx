@@ -2,7 +2,7 @@ import {Image, Pressable, StyleSheet, Text} from 'react-native';
 import React, {memo} from "react";
 import i18n from "i18next";
 import {router} from "expo-router";
-import { Directory, File, Paths } from 'expo-file-system/next';
+import { Directory, File, Paths } from 'expo-file-system';
 
 export const resourceImageDir = new Directory(Paths.cache, 'dd_library_resource_images');
 export const getResourceImageFile = (resourceId: string) => new File(resourceImageDir, `${resourceId}`);

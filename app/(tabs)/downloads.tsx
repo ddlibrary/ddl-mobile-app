@@ -9,7 +9,7 @@ import {
   Button,
   Modal
 } from "react-native";
-import {Directory, File, Paths} from "expo-file-system/next";
+import {Directory, File, Paths} from "expo-file-system";
 import * as FileSystem from "expo-file-system/legacy";
 import {useLocalSearchParams} from "expo-router";
 import React, { useEffect, useState, useCallback } from "react";

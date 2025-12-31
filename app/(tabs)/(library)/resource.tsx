@@ -15,7 +15,7 @@ import Api from "@/constants/Api";
 import i18n, {t} from "i18next";
 import ScrollView = Animated.ScrollView;
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import {File} from 'expo-file-system/next';
+import {File} from 'expo-file-system';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as WebBrowser from 'expo-web-browser';
 import {SafeAreaProvider} from "react-native-safe-area-context";
