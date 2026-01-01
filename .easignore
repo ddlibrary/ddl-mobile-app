@@ -14,6 +14,10 @@ dist/
 # OS specific
 .DS_Store
 
+# Native
+android/
+ios/
+
 # Environment files (EAS uses secrets, so local .env files are usually ignored)
 .env*.local
 
