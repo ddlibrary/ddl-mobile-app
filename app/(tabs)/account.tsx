@@ -1,4 +1,4 @@
-import {View, Text, Button, StyleSheet, Pressable, SafeAreaView, Modal, TextInput} from 'react-native'
+import {View, Text, Button, StyleSheet, Pressable, Modal, TextInput} from 'react-native'
 import React, {useEffect, useState} from 'react'
 import {router} from "expo-router";
 import {useSession} from "@/context/AuthContext";
@@ -10,6 +10,7 @@ import * as SecureStore from "expo-secure-store";
 import i18n from "i18next";
 import Api from "@/constants/Api";
 import {HelloWave} from "@/components/HelloWave";
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 export default function AccountScreen() {
   const {t} = useTranslation();
@@ -53,7 +54,7 @@ export default function AccountScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaProvider style={styles.container}>
       <View style={{flex: 1, direction: i18n.language !== "en" ? "rtl" : "ltr"}}>
         <View
           style={[
@@ -170,7 +171,7 @@ export default function AccountScreen() {
           </View>
         </Modal>
       </View>
-    </SafeAreaView>
+    </SafeAreaProvider>
   )
 }
 

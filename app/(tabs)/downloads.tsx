@@ -1,7 +1,6 @@
 import {
   StyleSheet,
   Text,
-  SafeAreaView,
   FlatList,
   View,
   Pressable,
@@ -10,253 +9,244 @@ import {
   Button,
   Modal
 } from "react-native";
-import {Directory, File, Paths} from "expo-file-system/next";
-import * as FileSystem from "expo-file-system";
+import {Directory, File, Paths} from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import {useLocalSearchParams} from "expo-router";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Api from "@/constants/Api";
-import {SafeAreaProvider} from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
-import i18n, {t} from "i18next";
+import i18n, { t } from "i18next";
+
+const LIBRARY_DIRECTORY = "dd_library_resource_files";
+
+interface DownloadedFile {
+  title: string;
+  fileName: string;
+  type: string | null;
+  uri: string;
+  size: number | null;
+  downloaded: string;
+}
 
 export default function DownloadsScreen() {
   const { id: rawId, title } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [data, setData] = useState<{
-    title: string,
-    fileName: string,
-    type: string | null,
-    uri: string,
-    size: number | null
-  }[]>([]);
+  const [selectedFile, setSelectedFile] = useState<DownloadedFile | null>(null);
+  const [data, setData] = useState<DownloadedFile[]>([]);
+  
   const id = String(rawId);
+  const isRTL = i18n.language !== "en";
 
-  const downloadAndStoreFile = async (id: string) => {
-    const url = Api.fileApi + id;
-    console.log("Downloading " + url);
-    const destination = new Directory(Paths.document, "resource_files");
-    try {
-      if (!destination.exists)
-        destination.create();
-      const files = destination.list();
-      const fileNamesWithoutExt = files.map((file) => (file.uri.split("/").pop() ?? "").replace(/\.[^/.]+$/, ""));
-      const exists = fileNamesWithoutExt.includes(id);
-      if (!exists) {
-        const output = await File.downloadFileAsync(url, destination);
-        const fileNameWithoutExt = (output.uri.split("/").pop() ?? "").replace(/\.[^/.]+$/, "");
-        if (fileNameWithoutExt !== id ) {
-          const fileExtension = output.uri.split(".").pop();
-          await FileSystem.moveAsync({from: output.uri, to: destination.uri + "/" + id + "." + fileExtension});
-        }
-        const metadata = { title: title, filename: output.uri.split("/").pop(), downloadedAt: new Date().toISOString() };
-        const metadataFile = new File(destination, id + ".json");
-        metadataFile.create();
-        metadataFile.write(JSON.stringify(metadata, null, 2));
-        console.log("File created")
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const listFiles = () => {
-    const directory = new Directory(Paths.document, "resource_files");
-    try {
-      if (!directory.exists)
+  const listFiles = useCallback(async () => {
+    const directory = new Directory(Paths.document, LIBRARY_DIRECTORY);
+    if (!directory.exists) {
+      try {
         directory.create();
+      } catch (error) {
+        console.error("Error creating directory:", error);
+        return;
+      }
     }
-    catch (error) {
-      console.error("Error creating directory:", error);
-    }
+
     const files = directory.list();
-    const fileData = [];
+    const fileData: DownloadedFile[] = [];
+
     for (const file of files) {
-      if (file.uri.endsWith(".json")) continue;
+      if (file.uri.endsWith(".json") || !(file instanceof File)) continue;
+
       const fileName = file.uri.split("/").pop() ?? "";
-      const metadataPath = "resource_files/" + fileName.replace(/\.[^/.]+$/, "") + ".json";
-      const metadataFile = new File(Paths.document, metadataPath);
-      let trimmedTitle = "";
-      let downloaded = "";
+      const metadataFile = new File(directory, fileName.replace(/\.[^/.]+$/, "") + ".json");
+      
+      let trimmedTitle = fileName;
+      let downloaded = new Date().toISOString();
+
       if (metadataFile.exists) {
         try {
-          const metadataContent = metadataFile.text();
-          const metadata = JSON.parse(metadataContent);
-          trimmedTitle = metadata.title;
-          trimmedTitle = trimmedTitle.length > 40 ? trimmedTitle.slice(0, 40) + "..." : trimmedTitle;
-          downloaded = metadata.downloadedAt;
+          const metadata = JSON.parse(await metadataFile.text());
+          trimmedTitle = metadata.title || fileName;
+          downloaded = metadata.downloadedAt || downloaded;
         } catch (error) {
-          console.error("Error reading metadata file:", error);
+          console.error("Error reading metadata:", error);
         }
       }
-      if (file instanceof File) {
-        fileData.push({title: trimmedTitle, fileName: fileName, type: file.type, uri: file.uri, size: file.size, downloaded});
-      }
+
+      fileData.push({
+        title: trimmedTitle,
+        fileName,
+        type: file.type,
+        uri: file.uri,
+        size: file.size,
+        downloaded
+      });
     }
     setData(fileData);
-  }
-
-  useEffect(() => {
-    if (id !== "undefined") {
-      setIsLoading(true);
-      downloadAndStoreFile( id )
-        .then(() => listFiles())
-        .then(() => setIsLoading(false));
-    }
-  }, [id]);
-
-  useEffect(() => {
-    listFiles();
   }, []);
 
+  const downloadAndStoreFile = useCallback(async (fileId: string) => {
+    const url = Api.fileApi + fileId;
+    const destination = new Directory(Paths.document, LIBRARY_DIRECTORY);
+    
+    try {
+      if (!destination.exists) destination.create();
+      
+      const files = destination.list();
+      const exists = files.some(f => f.uri.includes(fileId));
+
+      if (!exists) {
+        const output = await File.downloadFileAsync(url, destination);
+        const fileName = output.uri.split("/").pop() ?? "";
+        const ext = fileName.split(".").pop();
+        
+        // Ensure filename matches ID for consistency
+        if (!fileName.startsWith(fileId)) {
+          await FileSystem.moveAsync({
+            from: output.uri,
+            to: `${destination.uri}/${fileId}.${ext}`
+          });
+        }
+
+        const metadata = { 
+          title: title, 
+          filename: fileName, 
+          downloadedAt: new Date().toISOString() 
+        };
+        const metadataFile = new File(destination, `${fileId}.json`);
+        metadataFile.create();
+        metadataFile.write(JSON.stringify(metadata, null, 2));
+      }
+    } catch (error) {
+      console.error("Download error:", error);
+    }
+  }, [title]);
+
+  useEffect(() => {
+    const init = async () => {
+      if (id !== "undefined") {
+        setIsLoading(true);
+        await downloadAndStoreFile(id);
+      }
+      await listFiles();
+      setIsLoading(false);
+    };
+    init();
+  }, [id, downloadAndStoreFile, listFiles]);
+
   const openFile = async (uri: string) => {
-    if (Platform.OS === 'android') {
-      try {
-        const contentUri = await FileSystem.getContentUriAsync(uri)
+    try {
+      if (Platform.OS === 'android') {
+        const contentUri = await FileSystem.getContentUriAsync(uri);
         await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
           data: contentUri,
           flags: 1,
         });
-      } catch (error) {
-        console.error("Error opening file:", error);
-      }
-    } else {
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(uri);
       } else {
-        console.log("Sharing is not available on this device");
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(uri);
+        }
       }
+    } catch (error) {
+      console.error("Error opening file:", error);
     }
   };
 
-  const deleteFile = (fileName: string) => {
+  const deleteFile = async (fileName: string) => {
     try {
-      const jsonFileName = fileName.replace(/\.[^/.]+$/, ".json");
-      const file = new File(Paths.document, "resource_files/" + fileName);
-      if (file.exists) {
-        file.delete();
-      }
-      const jsonFile = new File(Paths.document, "resource_files/" + jsonFileName);
-      if (jsonFile.exists) {
-        jsonFile.delete();
-      }
-      setSelectedId(null);
-      listFiles();
-      console.log("File deleted");
+      const baseName = fileName.replace(/\.[^/.]+$/, "");
+      const file = new File(Paths.document, `${LIBRARY_DIRECTORY}/${fileName}`);
+      const jsonFile = new File(Paths.document, `${LIBRARY_DIRECTORY}/${baseName}.json`);
+
+      if (file.exists) file.delete();
+      if (jsonFile.exists) jsonFile.delete();
+
+      setSelectedFile(null);
+      await listFiles();
     } catch (error) {
       console.error("Error deleting file:", error);
     }
   };
 
-  const Loading = () => {
-    if (isLoading) {
-      return (
-        <View
-          style={{flex: 1, alignItems: "center", padding: 0, paddingTop: 15}}
-        >
-          <ActivityIndicator animating size={"small"}/>
-        </View>
-      );
+  const getFileIcon = (type: string | null) => {
+    switch (type) {
+      case "application/pdf": return { lib: "MaterialCommunityIcons", name: "file-pdf-box" };
+      case "application/msword":
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        return { lib: "MaterialCommunityIcons", name: "file-word-box" };
+      case "audio/mpeg": return { lib: "MaterialIcons", name: "audio-file" };
+      default: return { lib: "MaterialCommunityIcons", name: "book" };
     }
   };
 
-  const Cards = ({item}) => {
-    let fileType = "book";
-    switch (item.type) {
-      case "application/pdf":
-        fileType = "file-pdf-box";
-        break;
-      case "application/msword":
-        fileType = "file-word-box";
-        break;
-      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        fileType = "file-word-box";
-        break;
-      case "audio/mpeg":
-        fileType = "audio-file";
-        break;
-    }
+  const renderItem = ({ item }: { item: DownloadedFile }) => {
+    const icon = getFileIcon(item.type);
     return (
       <View style={styles.fileContainer}>
-        <Pressable
-          style={styles.card}
-          onPress={() => openFile(item.uri)}
-        >
+        <Pressable style={styles.card} onPress={() => openFile(item.uri)}>
           <View style={styles.cardFirstRow}>
-            {fileType === "audio-file" ? (
-              <MaterialIcons name="audio-file" size={28} color="black" />
+            {icon.lib === "MaterialIcons" ? (
+              <MaterialIcons name={icon.name as any} size={28} color="black" />
             ) : (
-              <MaterialCommunityIcons name={fileType} size={28} color="black" />
+              <MaterialCommunityIcons name={icon.name as any} size={28} color="black" />
             )}
-            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
           </View>
           <View style={styles.cardSecondRow}>
-            <Text style={styles.fileSize}>{(item.size/(1024 * 1024)).toFixed(2)} MB</Text>
+            <Text style={styles.fileSize}>
+              {item.size ? (item.size / (1024 * 1024)).toFixed(2) : "0.00"} MB
+            </Text>
             <Text style={styles.time}>{item.downloaded.slice(0, 10)}</Text>
           </View>
         </Pressable>
         <MaterialIcons
-          style={{
-            marginLeft: i18n.language !== "en" ? 12 : 0,
-            marginRight: i18n.language !== "en" ? 0 : 12,
-          }}
+          style={{ marginHorizontal: 12 }}
           name="delete"
           size={24}
           color="red"
-          onPress={() => setSelectedId(item.uri)}
+          onPress={() => setSelectedFile(item)}
         />
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={selectedId === item.uri}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>{t("Are you sure?")}{"\n"}{"\n"}</Text>
-              <View style={styles.buttonContainer}>
-                <Button title={t("Cancel")} onPress={() => setSelectedId(null)} />
-                <Button title={t("Confirm")} color="red" onPress={() => {deleteFile(item.fileName)}} />
-              </View>
-            </View>
-          </View>
-        </Modal>
       </View>
     );
   };
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView
-        style={[
-          styles.container,
-          {
-            direction: i18n.language !== "en" ? "rtl" : "ltr",
-          }
-        ]}>
+      <SafeAreaView style={{ direction: isRTL ? "rtl" : "ltr" }}>
         <FlatList
           data={data}
-          renderItem={({item}) => <Cards item={item} />}
-          keyExtractor={(item, index) => index.toString()}
-          ListFooterComponent={<Loading />}
-          extraData={data}
-          ListEmptyComponent={
-            <View style={{ alignItems: "center", marginTop: 20 }}>
-              <Text>{t("No files downloaded yet!")}</Text>
-            </View>
-          }
+          renderItem={renderItem}
+          keyExtractor={(item) => item.uri}
+          ListFooterComponent={isLoading ? (
+            <ActivityIndicator style={{ marginTop: 15 }} size="small" />
+          ) : null}
+          ListEmptyComponent={!isLoading ? (
+            <View style={styles.emptyContainer}><Text>{t("No files downloaded yet!")}</Text></View>
+          ) : null}
         />
+
+        <Modal transparent visible={!!selectedFile} animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>{t("Are you sure?")}</Text>
+              <View style={styles.buttonContainer}>
+                <Button title={t("Cancel")} onPress={() => setSelectedFile(null)} />
+                <Button 
+                  title={t("Confirm")} 
+                  color="red" 
+                  onPress={() => selectedFile && deleteFile(selectedFile.fileName)} 
+                />
+              </View>
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   card: {
     flex: 1,
     backgroundColor: "#fff",
@@ -288,7 +278,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
     flexShrink: 1,
-    flexWrap: "wrap",
+    marginLeft: 10,
+  },
+  emptyContainer: {
+    alignItems: "center",
+    marginTop: 40,
   },
   fileSize: {
     backgroundColor: "gray",
@@ -326,7 +320,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     width: "100%",
+    marginTop: 20,
   },
 });

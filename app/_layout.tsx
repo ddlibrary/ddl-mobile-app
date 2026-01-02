@@ -3,7 +3,6 @@ import { initI18n } from "@/i18n";
 import { Stack } from 'expo-router/stack';
 import {SessionProvider} from "@/context/AuthContext";
 import {t} from "i18next";
-import {StatusBar} from "expo-status-bar";
 import {useEffect, useState} from "react";
 import {ActivityIndicator, View} from "react-native";
 import {SafeAreaProvider} from "react-native-safe-area-context";
@@ -32,7 +31,7 @@ export default function Root() {
   return (
     <SafeAreaProvider>
       <SessionProvider>
-        <StatusBar style="light" />
+
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen

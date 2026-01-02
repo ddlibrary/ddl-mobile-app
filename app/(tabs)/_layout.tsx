@@ -1,4 +1,4 @@
-import {router, Tabs, useSegments} from 'expo-router';
+import {Redirect, router, Tabs, useSegments} from 'expo-router';
 import React, {useEffect} from 'react';
 import {Image, Platform, StyleSheet} from 'react-native';
 
@@ -19,15 +19,7 @@ function LogoTitle() {
 export default function TabLayout() {
   const { t } = useTranslation();
   const colorScheme = useColorScheme();
-  const { session, isLoading } = useSession();
-  const segments = useSegments();
-
-  useEffect(() => {
-    if (!isLoading && !session && ["account", "downloads"].includes(segments[1] ?? "")) {
-      router.push("/login");
-    }
-  }, [segments, isLoading, session]);
-
+  const { session } = useSession();
 
   return (
     <Tabs
@@ -67,6 +59,14 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="downloads"
+        listeners={{
+          tabPress: (e) => {
+            if (!session) {
+              e.preventDefault(); // This stops the screen from loading
+              router.push('/login'); // This sends them to login instead
+            }
+          },
+        }}
         options={{
           title: t('downloads'),
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="square.and.arrow.down.fill" color={color} />,
@@ -87,6 +87,14 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="account"
+        listeners={{
+          tabPress: (e) => {
+            if (!session) {
+              e.preventDefault(); // This stops the screen from loading
+              router.push('/login'); // This sends them to login instead
+            }
+          },
+        }}
         options={{
           title: t('Account'),
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,

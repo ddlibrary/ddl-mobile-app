@@ -3,141 +3,107 @@ import {
   StyleSheet,
   FlatList,
   View,
-  SafeAreaView,
   Pressable,
   Text, RefreshControl, TextInput, Platform
 } from 'react-native';
 import i18n, {t} from "i18next";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import Api from "@/constants/Api";
-import {router,useLocalSearchParams} from "expo-router";
+import {useLocalSearchParams} from "expo-router";
 import RenderCard from "@/components/LibraryCards";
 import {Ionicons} from "@expo/vector-icons";
+import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 
 export default function LibraryScreen() {
   const { type, catId } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [isMoreLoading, setIsMoreLoading] = useState(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any[]>([]);
   const [error, setError] = useState(null);
   const [offset, setOffset] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [waitTime, setWaitTime] = useState(0);
 
-  useEffect(() => {
-    setIsLoading(true);
-    setData([]);
-    getData();
-    setSearchQuery("");
-  }, [catId]);
+  const isRTL = i18n.language !== "en";
 
-  useEffect(() => {
-    if (waitTime <= 0) return;
-
-    const interval = setInterval(() => {
-      setWaitTime((prev) => prev - 1000);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [waitTime]);
-
-  const fetchData = async (url: string) => {
-    let accumulatedData: any[] = [];
+  const fetchData = useCallback(async (url: string, append = false) => {
     try {
-      console.log("filter string: " + url);
-      let delay = 1000;
-      let retries = 5;
+      const retries = 5;
+      
       for (let attempt = 0; attempt < retries; attempt++) {
         const response = await fetch(url);
         if (response.ok) {
           const json = await response.json();
-          console.log("response received")
-          accumulatedData.push(...json);
-          break;
-        } else if (response.status === 429) {
-          // const retryAfter = response.headers.get("Retry-After"); // server's retry-after is unreasonably high
-          const retryAfter = "5";
-          const waitTime = retryAfter ? parseInt(retryAfter, 10) * 1000 : delay;
-          setWaitTime(waitTime);
-          console.warn(`429 Too Many Requests. Retrying in ${waitTime}ms...`);
-          await new Promise((resolve) => setTimeout(resolve, waitTime));
-          delay *= 2;
+          setData(prev => append ? [...prev, ...json] : json);
+          return;
+        } 
+        
+        if (response.status === 429) {
+          const wait = 5000;
+          setWaitTime(wait);
+          await new Promise((resolve) => setTimeout(resolve, wait));
         } else {
           break;
         }
       }
-    } catch (error) {
-      setError(error);
-      console.error("Error fetching data:", error);
-      setIsLoading(false)
-      setIsMoreLoading(false);
+    } catch (err: any) {
+      setError(err);
     } finally {
-      setData((prevData) => [...prevData, ...accumulatedData]);
       setIsLoading(false);
       setIsMoreLoading(false);
     }
-  };
+  }, []);
 
-  const getData = (text = "", nextOffset = 0 ) => {
-    let url =
-      Api.resourcesApi + i18n.language + "/" + nextOffset + "?search=" + encodeURI(text) + (text ? "" : (type ? `&${type}=${catId}` : ""));
-    fetchData(url);
-  };
+  const getData = useCallback((text = searchQuery, nextOffset = 0) => {
+    const isSearch = !!text;
+    const baseUrl = Api.resourcesApi + i18n.language + "/" + nextOffset;
+    const queryParams = isSearch 
+      ? `?search=${encodeURIComponent(text)}`
+      : `?${type ? `${type}=${catId}` : ""}`;
+    
+    fetchData(baseUrl + queryParams, nextOffset > 0);
+  }, [catId, type, searchQuery, fetchData]);
 
-
-  if (isLoading) {
-    return (
-      <View
-        style={{flex: 1, alignItems: "center", padding: 0, paddingTop: 15}}
-      >
-        <ActivityIndicator animating size={"large"}/>
-        {waitTime > 0 ?
-          (<Text>{t("server_busy_retrying", {waitTime: waitTime/1000})}</Text>)
-          : (<Text>{t("loading_with_periods")}</Text>)
-        }
-      </View>
-    )
-  }
-
-  if (error) {
-    setError(null);
-    return (
-      <View
-        style={{flex: 1, alignItems: "center", padding: 0, paddingTop: 15}}
-      >
-        <Text>{t("Error fetching data.")}</Text>
-      </View>
-    )
-  }
-
-  const refreshData = () => {
+  useEffect(() => {
+    setIsLoading(true);
     setData([]);
     setSearchQuery("");
+    setOffset(0);
+    getData("", 0);
+  }, [catId, getData]);
+
+  useEffect(() => {
+    if (waitTime <= 0) return;
+    const interval = setInterval(() => {
+      setWaitTime((prev) => Math.max(0, prev - 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [waitTime]);
+
+  const refreshData = () => {
     setError(null);
     setIsLoading(true);
     setOffset(0);
-    getData();
-    router.replace("./library")
+    setSearchQuery("");
+    getData("", 0);
   };
 
   const getMoreData = () => {
     const nextOffset = offset + 32;
-    setOffset(offset + 32);
+    setOffset(nextOffset);
     setIsMoreLoading(true);
-    getData(undefined, nextOffset);
+    getData(searchQuery, nextOffset);
   };
 
-  const loadMoreData = () => {
+  const renderFooter = () => {
     if (isMoreLoading) {
       return (
-        <View
-          style={{flex: 1, alignItems: "center", padding: 0, paddingTop: 15}}
-        >
-          <ActivityIndicator animating size={"small"}/>
+        <View style={styles.footerContainer}>
+          <ActivityIndicator size="small" />
         </View>
       );
     }
-    else if (!searchQuery)
+    if (!searchQuery && data.length > 0) {
       return (
         <View style={styles.footerContainer}>
           <Pressable onPress={getMoreData}>
@@ -145,67 +111,66 @@ export default function LibraryScreen() {
           </Pressable>
         </View>
       );
+    }
+    return null;
+  };
+
+  if (isLoading && data.length === 0) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" />
+        <Text style={{ marginTop: 10 }}>
+          {waitTime > 0 ? t("server_busy_retrying", { waitTime: waitTime / 1000 }) : t("loading_with_periods")}
+        </Text>
+      </View>
+    );
   }
 
   return (
-    <SafeAreaView style={styles.parentContainer}>
-      <View style={[
-        styles.searchBar,
-        {
-          flexDirection: i18n.language !== "en" ? "row-reverse" : "row",
-        }
-      ]}>
-        <Ionicons name="search" size={20} color="#888" style={{
-          marginRight: i18n.language !== "en" ? 0 : 8,
-          marginLeft: i18n.language !== "en" ? 8 : 0,
-        }} />
-        <TextInput
-          style={[
-            styles.input,
-            {textAlign: i18n.language !== "en" ? "right" : "left",}
-          ]}
-          placeholder={t("search_our_library_with_periods")}
-          placeholderTextColor="#888"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          onSubmitEditing={(event) => {
-            setOffset(0);
-            setIsLoading(true);
-            setData([]);
-            getData(event.nativeEvent.text);
-            console.log("Search submitted:", searchQuery);
-          }}
-          clearButtonMode="always"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-      </View>
-
-      <FlatList
-        style={styles.container}
-        data={data}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={(item) => (
-          <RenderCard item={item.item} />
-        )}
-        numColumns={2}
-        ListFooterComponent={loadMoreData}
-        refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={() => {
-              refreshData();
-            }}
+    <SafeAreaProvider style={styles.parentContainer}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={[styles.searchBar, { flexDirection: isRTL ? "row-reverse" : "row" }]}>
+          <Ionicons 
+            name="search" 
+            size={20} 
+            color="#888" 
+            style={isRTL ? { marginLeft: 8 } : { marginRight: 8 }} 
           />
-        }
-        ListEmptyComponent={
-          <View style={styles.emptyContent}>
-            <Text>{t("No match found.")}</Text>
-          </View>
-        }
-      />
-    </SafeAreaView>
-  )
+          <TextInput
+            style={[styles.input, { textAlign: isRTL ? "right" : "left" }]}
+            placeholder={t("search_our_library_with_periods")}
+            placeholderTextColor="#888"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onSubmitEditing={() => {
+              setOffset(0);
+              setIsLoading(true);
+              getData(searchQuery, 0);
+            }}
+            clearButtonMode="always"
+            autoCapitalize="none"
+          />
+        </View>
+
+        <FlatList
+          style={styles.container}
+          data={data}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
+          renderItem={({ item }) => <RenderCard item={item} />}
+          numColumns={2}
+          ListFooterComponent={renderFooter}
+          refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshData} />}
+          ListEmptyComponent={
+            !isLoading ? (
+              <View style={styles.emptyContent}>
+                <Text>{t("No match found.")}</Text>
+              </View>
+            ) : null
+          }
+        />
+      </SafeAreaView>
+    </SafeAreaProvider>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -229,9 +194,15 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "#333",
+    paddingVertical: 8,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   container: {
-    marginBottom: 60,
+    flex: 1,
   },
   headerImage: {
     color: '#808080',

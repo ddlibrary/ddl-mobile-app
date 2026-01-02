@@ -2,21 +2,29 @@ import {Image, Pressable, StyleSheet, Text} from 'react-native';
 import React, {memo} from "react";
 import i18n from "i18next";
 import {router} from "expo-router";
-import * as FileSystem from 'expo-file-system';
+import { Directory, File, Paths } from 'expo-file-system';
 
+export const resourceImageDir = new Directory(Paths.cache, 'dd_library_resource_images');
+export const getResourceImageFile = (resourceId: string) => new File(resourceImageDir, `${resourceId}`);
 
-const resourceImageDir = FileSystem.cacheDirectory + 'resource_images/';
-const getResourceImageFileUri = (resourceId: string) => resourceImageDir + `${resourceId}`;
-
-async function ensureDirExists() {
-  const dirInfo = await FileSystem.getInfoAsync(resourceImageDir);
-  if (!dirInfo.exists) {
-    console.log("Directory doesn't exist, creating…");
-    await FileSystem.makeDirectoryAsync(resourceImageDir, { intermediates: true });
+export async function ensureDirExists() {
+  if (!resourceImageDir.exists) {
+    resourceImageDir.create();
   }
 }
 
-const RenderCard = ({ item }) => {
+interface ResourceItem {
+  id: string;
+  img: string;
+  title: string;
+  abstract: string;
+}
+
+interface RenderCardProps {
+  item: ResourceItem;
+}
+
+const RenderCard = ({ item }: RenderCardProps) => {
   return (
     <Pressable
       style={({pressed}) => [
@@ -27,20 +35,17 @@ const RenderCard = ({ item }) => {
       ]}
       onPress={async () => {
         await ensureDirExists();
-        const imageUri = getResourceImageFileUri(item.id);
-        console.log('Downloading', imageUri);
-        const fileInfo = await FileSystem.getInfoAsync(imageUri);
-        if (!fileInfo.exists) {
-          console.log("Image isn't cached locally. Downloading…");
-          await FileSystem.downloadAsync(item.img, imageUri);
+        const imageFile = getResourceImageFile(item.id);
+        if (!imageFile.exists) {
+            await File.downloadFileAsync(item.img, imageFile);
         }
         router.push({
           pathname: "./resource",
           params: {
             id: item.id,
             title: item.title,
-            abstract: "item.abstract", // until we non-HTMLify abstract
-            img: imageUri,
+            abstract: item.abstract,
+            img: imageFile.uri,
           }
         });
       }}

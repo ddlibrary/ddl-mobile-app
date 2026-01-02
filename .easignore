@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Expo / EAS
+.expo/
+dist/
+.eas/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# OS specific
+.DS_Store
+
+# Native
+android/
+ios/
+
+# Environment files (EAS uses secrets, so local .env files are usually ignored)
+.env*.local
+
+# Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*

@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -17,6 +16,7 @@ import * as Device from 'expo-device';
 import Api from "@/constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from "i18next";
+import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 
 export default function LoginScreen() {
   const {t} = useTranslation();
@@ -82,73 +82,75 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={{ flex: 1 }}
     >
-      <SafeAreaView style={{flex: 1,}}>
-        <Link
-          href="./(tabs)"
-          style={{
-            textAlign: i18n.language !== "en" ? "left" : "right",
-            padding: 15,
-            fontWeight: "bold",
-          }}
-        >
-          {t("Skip")}
-        </Link>
-        <View style={{ flex: 1, justifyContent: "flex-end", alignItems:"center", marginTop: 100 }}>
-          <Image style={styles.ddlLogo} source={require('@/assets/images/dd-library-logo-color.png')} />
-          <Text
+      <SafeAreaProvider>
+        <SafeAreaView style={{flex: 1,}}>
+          <Link
+            href="./(tabs)"
             style={{
-              marginBottom: 15,
+              textAlign: i18n.language !== "en" ? "left" : "right",
+              padding: 15,
+              fontWeight: "bold",
             }}
           >
-            {t("Login with your DDL account")}
-          </Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder={t("Email")}
-              style={[
-                styles.input,
-                {
-                  textAlign: i18n.language !== "en" ? "right" : "left",
-                }
-              ]}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              onChangeText={(text: string) => setEmail(text)}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder={t("Password")}
-              secureTextEntry={true}
-              style={[
-                styles.input,
-                {
-                  textAlign: i18n.language !== "en" ? "right" : "left",
-                }
-              ]}
-              onChangeText={(text: string) => setPassword(text)}
-            />
-          </View >
-          {error && (
+            {t("Skip")}
+          </Link>
+          <View style={{ flex: 1, justifyContent: "flex-end", alignItems:"center", marginTop: 100 }}>
+            <Image style={styles.ddlLogo} source={require('@/assets/images/dd-library-logo-color.png')} />
             <Text
               style={{
-                color: "#ff0101",
-                fontWeight: "bold",
-                marginBottom: 20
-            }}>
-              {error}
+                marginBottom: 15,
+              }}
+            >
+              {t("Login with your DDL account")}
             </Text>
-          )}
-          <Button
-            title={t("Sign In")}
-            color={"#ffa800"}
-            onPress={() => submitForm()}
-          />
-          <Text style={{ marginTop: 20 }}>{t("Don't have an account?")}</Text>
-          <Link replace href={"./register"} style={{ fontWeight: "bold" }}>{t("Register")}</Link>
-          <View style={{ flex : 1 }} />
-        </View>
-      </SafeAreaView>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder={t("Email")}
+                style={[
+                  styles.input,
+                  {
+                    textAlign: i18n.language !== "en" ? "right" : "left",
+                  }
+                ]}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={(text: string) => setEmail(text)}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder={t("Password")}
+                secureTextEntry={true}
+                style={[
+                  styles.input,
+                  {
+                    textAlign: i18n.language !== "en" ? "right" : "left",
+                  }
+                ]}
+                onChangeText={(text: string) => setPassword(text)}
+              />
+            </View >
+            {error && (
+              <Text
+                style={{
+                  color: "#ff0101",
+                  fontWeight: "bold",
+                  marginBottom: 20
+              }}>
+                {error}
+              </Text>
+            )}
+            <Button
+              title={t("Sign In")}
+              color={"#ffa800"}
+              onPress={() => submitForm()}
+            />
+            <Text style={{ marginTop: 20 }}>{t("Don't have an account?")}</Text>
+            <Link replace href={"./register"} style={{ fontWeight: "bold" }}>{t("Register")}</Link>
+            <View style={{ flex : 1 }} />
+          </View>
+        </SafeAreaView>
+      </SafeAreaProvider>
     </KeyboardAvoidingView>
   );
 }

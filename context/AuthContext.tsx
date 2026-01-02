@@ -53,7 +53,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
             .then((data) => data.json())
             .then(async (res) => {
               if (res.message) {
-                console.log(res.message);
                 await AsyncStorage.removeItem("email");
                 await AsyncStorage.removeItem("password");
                 setSession(null);

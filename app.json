@@ -2,7 +2,7 @@
   "expo": {
     "name": "DD Library",
     "slug": "ddl-mobile-app",
-    "version": "1.1.0",
+    "version": "1.3.0",
     "runtimeVersion": {
       "policy": "appVersion"
     },
@@ -43,7 +43,8 @@
         }
       ],
       "expo-localization",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
