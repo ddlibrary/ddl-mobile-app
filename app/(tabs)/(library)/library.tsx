@@ -57,10 +57,10 @@ export default function LibraryScreen() {
   const getData = useCallback((text = searchQuery, nextOffset = 0) => {
     const isSearch = !!text;
     const baseUrl = Api.resourcesApi + i18n.language + "/" + nextOffset;
-    const queryParams = isSearch 
+    const queryParams = isSearch
       ? `?search=${encodeURIComponent(text)}`
       : `?${type ? `${type}=${catId}` : ""}`;
-    
+
     fetchData(baseUrl + queryParams, nextOffset > 0);
   }, [catId, type, searchQuery, fetchData]);
 
@@ -70,7 +70,7 @@ export default function LibraryScreen() {
     setSearchQuery("");
     setOffset(0);
     getData("", 0);
-  }, [catId, getData]);
+  }, [catId]);
 
   useEffect(() => {
     if (waitTime <= 0) return;

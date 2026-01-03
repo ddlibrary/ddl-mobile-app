@@ -18,11 +18,13 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {File} from 'expo-file-system';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as WebBrowser from 'expo-web-browser';
+import { useSession } from "@/context/AuthContext";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import {ensureDirExists, getResourceImageFile} from "@/components/LibraryCards";
 
 export default function ResourceScreen() {
   const {id, title, img: rawId, abstract: rawAbstract} = useLocalSearchParams();
+  const { session } = useSession();
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
@@ -245,6 +247,14 @@ export default function ResourceScreen() {
       return { lib: MaterialCommunityIcons, name: "book" };
     };
 
+    const handleDownload = (attId: any) => {
+      if (!session) {
+        router.push("/login");
+        return;
+      }
+      router.push({ pathname: "../downloads", params: { id: attId, title } });
+    };
+
     return (
       <View style={styles.cardView}>
         <Text style={[styles.cardTitle, { textAlign, fontWeight: "bold", marginBottom: 10 }]}>{t("Resource files")}</Text>
@@ -260,7 +270,7 @@ export default function ResourceScreen() {
                     <Text style={styles.buttonText}>{t("View")}</Text>
                   </View>
                 </Pressable>
-                <Pressable style={styles.fileButton} onPress={() => router.push({ pathname: "../downloads", params: { id: att.id, title } })}>
+                <Pressable style={styles.fileButton} onPress={() => handleDownload(att.id)}>
                   <View style={styles.buttonInner}>
                     <MaterialIcons name="download" size={18} color="white" />
                     <Text style={styles.buttonText}>{t("Download")}</Text>
